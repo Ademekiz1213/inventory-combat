@@ -96,6 +96,8 @@ const state = {
   enemyTimer: 0,
   lockTimer: 0,
   stats: { damage: 0, blocked: 0 },
+  runDamage: 0,
+  speed: 1,
   activeBonuses: new Map()
 };
 
@@ -113,6 +115,13 @@ const el = {
   playerHpText: document.getElementById("playerHpText"),
   playerHpBar: document.getElementById("playerHpBar"),
   playerBlock: document.getElementById("playerBlock"),
+  playerPoison: document.getElementById("playerPoison"),
+  enemyTimerFill: document.getElementById("enemyTimerFill"),
+  enemySubtitle: document.getElementById("enemySubtitle"),
+  battlePath: document.getElementById("battlePath"),
+  synergyList: document.getElementById("synergyList"),
+  speedBtn: document.getElementById("speedBtn"),
+  runDamage: document.getElementById("runDamage"),
   enemyName: document.getElementById("enemyName"),
   enemyIcon: document.getElementById("enemyIcon"),
   enemyHpText: document.getElementById("enemyHpText"),
@@ -147,6 +156,9 @@ function initGame() {
   state.reserve = [];
   state.player = { maxHp: 50, hp: 50, block: 0, poison: 0 };
   state.stats = { damage: 0, blocked: 0 };
+  state.runDamage = 0;
+  state.speed = 1;
+  if (el.speedBtn) el.speedBtn.textContent = "1x Hız";
   state.inventory[0] = createInstance("sword");
   state.inventory[1] = createInstance("fireStone");
   state.inventory[4] = createInstance("shield");
@@ -170,6 +182,8 @@ function renderAll() {
   renderReserve();
   renderStats();
   renderCombatants();
+  renderRoadmap();
+  renderSynergies();
 }
 
 function renderGrid() {
@@ -341,6 +355,42 @@ function typeLabel(type) {
   return ({ weapon: "Silah", defense: "Savunma", booster: "Güçlendirici", passive: "Pasif", consumable: "Tek Kullanımlık", start: "Savaş Başı" })[type] || type;
 }
 
+function enemySubtitle(enemy) {
+  if (enemy.lockCooldown) return "Mini boss • eşya kilitler";
+  if (enemy.poison) return "Zehir tehdidi • uzun savaş tehlikeli";
+  if (enemy.block > 0) return "Zırhlı hedef • bloklu başlangıç";
+  if (enemy.attackCooldown < 2) return "Hızlı saldırgan • blok önemli";
+  return "Temel tehdit • build testi";
+}
+
+function renderRoadmap() {
+  if (!el.battlePath) return;
+  el.battlePath.innerHTML = "";
+  ENEMIES.slice(0, TOTAL_BATTLES).forEach((enemy, index) => {
+    const node = document.createElement("div");
+    node.className = "path-node";
+    if (index < state.battleIndex) node.classList.add("done");
+    if (index === state.battleIndex) node.classList.add("active");
+    node.innerHTML = `<span>${enemy.icon}</span><strong>${index + 1}. ${enemy.name}</strong><small>${enemy.lockCooldown ? "Mini Boss" : enemy.poison ? "Zehir" : enemy.block ? "Zırh" : "Normal"}</small>`;
+    el.battlePath.appendChild(node);
+  });
+}
+
+function renderSynergies() {
+  if (!el.synergyList) return;
+  el.synergyList.innerHTML = "";
+  const entries = [];
+  for (const [instanceId, bonuses] of state.activeBonuses.entries()) {
+    const instance = state.inventory.find(i => i?.instanceId === instanceId);
+    if (!instance) continue;
+    const target = ITEMS[instance.itemId];
+    for (const bonus of bonuses) {
+      entries.push(`<div class="synergy-line"><strong>${bonus.source}</strong> → ${target.icon} ${target.name}<br><span>${bonus.label}</span></div>`);
+    }
+  }
+  el.synergyList.innerHTML = entries.length ? entries.join("") : `<div class="empty-state">Bonus yok. Taşları, yüzükleri veya dikenleri hedef eşyaların yanına koy.</div>`;
+}
+
 function renderStats() {
   const combatItems = state.inventory.filter(Boolean);
   let dps = 0;
@@ -353,6 +403,7 @@ function renderStats() {
   el.dpsEstimate.textContent = dps.toFixed(1);
   el.blockEstimate.textContent = block.toFixed(1);
   el.synergyCount.textContent = [...state.activeBonuses.values()].reduce((a, b) => a + b.length, 0);
+  if (el.runDamage) el.runDamage.textContent = Math.ceil(state.runDamage);
   el.battleNumber.textContent = Math.min(state.battleIndex + 1, TOTAL_BATTLES);
   el.battleTotal.textContent = TOTAL_BATTLES;
   el.gold.textContent = state.gold;
@@ -366,13 +417,19 @@ function renderCombatants() {
   el.playerHpText.textContent = `${Math.ceil(p.hp)}/${p.maxHp}`;
   el.playerHpBar.style.width = `${Math.max(0, p.hp / p.maxHp * 100)}%`;
   el.playerBlock.textContent = Math.ceil(p.block);
+  if (el.playerPoison) el.playerPoison.textContent = Math.ceil(p.poison || 0);
   el.enemyName.textContent = e.name;
   el.enemyIcon.textContent = e.icon;
+  if (el.enemySubtitle) el.enemySubtitle.textContent = enemySubtitle(e);
   el.enemyHpText.textContent = `${Math.ceil(e.hp)}/${e.maxHp}`;
   el.enemyHpBar.style.width = `${Math.max(0, e.hp / e.maxHp * 100)}%`;
   el.enemyBlock.textContent = Math.ceil(e.block);
   el.enemyIntent.textContent = e.intent;
   el.battleTitle.textContent = state.phase === "combat" ? `${e.name} ile savaş` : `${e.name} için hazırlan`;
+  if (el.enemyTimerFill) {
+    const pct = Math.min(100, (state.enemyTimer / Math.max(0.1, e.attackCooldown)) * 100);
+    el.enemyTimerFill.parentElement.style.background = `conic-gradient(var(--gold) ${pct}%, rgba(255,255,255,0.06) ${pct}%)`;
+  }
 }
 
 function startCombat() {
@@ -408,7 +465,7 @@ function startCombat() {
 }
 
 function gameLoop(now) {
-  const dt = Math.min(0.08, (now - lastTime) / 1000);
+  const dt = Math.min(0.08, (now - lastTime) / 1000) * state.speed;
   lastTime = now;
   updateCombat(dt);
   renderCombatRuntime();
@@ -489,7 +546,9 @@ function damageEnemy(amount, source) {
   damage -= blocked;
   state.enemy.hp -= damage;
   state.stats.damage += damage;
+  state.runDamage += Math.max(0, damage);
   addLog(`${source} ${amount} hasar verdi${blocked ? ` (${blocked} bloklandı)` : ""}.`);
+  floatNumber(el.enemyCard, `-${Math.ceil(damage)}`, "damage");
   flash(el.enemyCard, "hit");
 }
 
@@ -501,6 +560,8 @@ function enemyAttack() {
   state.player.hp -= damage;
   state.stats.blocked += blocked;
   addLog(`${state.enemy.name} ${state.enemy.attackDamage} hasar verdi${blocked ? ` (${blocked} bloklandı)` : ""}.`);
+  if (damage > 0) floatNumber(el.playerCard, `-${Math.ceil(damage)}`, "damage");
+  if (blocked > 0) floatNumber(el.playerCard, `🛡 ${Math.ceil(blocked)}`, "block");
   if (state.enemy.poison) {
     state.player.poison += state.enemy.poison;
     addLog(`${state.enemy.name} ${state.enemy.poison} zehir uyguladı.`);
@@ -511,7 +572,9 @@ function enemyAttack() {
 function healPlayer(amount, source) {
   const before = state.player.hp;
   state.player.hp = Math.min(state.player.maxHp, state.player.hp + amount);
-  addLog(`${source} ${Math.ceil(state.player.hp - before)} can iyileştirdi.`);
+  const healed = Math.ceil(state.player.hp - before);
+  addLog(`${source} ${healed} can iyileştirdi.`);
+  if (healed > 0) floatNumber(el.playerCard, `+${healed}`, "heal");
 }
 
 function lockRandomItem() {
@@ -533,6 +596,7 @@ function renderCombatRuntime() {
   renderGrid();
   renderCombatants();
   renderStats();
+  renderRoadmap();
 }
 
 function winBattle() {
@@ -564,7 +628,7 @@ function showRewards() {
     const item = ITEMS[itemId];
     const card = document.createElement("button");
     card.className = "reward-card";
-    card.innerHTML = `<span class="big-icon">${item.icon}</span><h3>${item.name}</h3><p>${item.description}</p>`;
+    card.innerHTML = `<span class="big-icon">${item.icon}</span><p class="eyebrow">${typeLabel(item.type)} • ${item.rarity}</p><h3>${item.name}</h3><p>${item.description}</p>`;
     card.addEventListener("click", () => chooseReward(itemId));
     el.rewardChoices.appendChild(card);
   }
@@ -604,6 +668,18 @@ function flash(node, className) {
   node.classList.add(className, "shake");
 }
 
+function floatNumber(target, text, kind) {
+  if (!target) return;
+  const rect = target.getBoundingClientRect();
+  const node = document.createElement("div");
+  node.className = `floating-number ${kind}`;
+  node.textContent = text;
+  node.style.left = `${rect.left + rect.width / 2}px`;
+  node.style.top = `${rect.top + rect.height * 0.34}px`;
+  document.body.appendChild(node);
+  setTimeout(() => node.remove(), 900);
+}
+
 function addLog(text) {
   const line = document.createElement("div");
   line.className = "log-line";
@@ -624,6 +700,12 @@ function shuffle(array) {
 }
 
 el.start.addEventListener("click", startCombat);
+if (el.speedBtn) {
+  el.speedBtn.addEventListener("click", () => {
+    state.speed = state.speed === 1 ? 1.5 : state.speed === 1.5 ? 2 : 1;
+    el.speedBtn.textContent = `${state.speed}x Hız`;
+  });
+}
 el.restart.addEventListener("click", () => {
   el.endModal.classList.add("hidden");
   el.rewardModal.classList.add("hidden");
