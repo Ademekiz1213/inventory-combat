@@ -6,9 +6,21 @@ Canlı demo:
 
 https://ademekiz1213.github.io/inventory-combat/
 
-## Profesyonel Sürümdeki Özellikler
+## Güncel Yön: Oyun Arayüzü
 
-- Premium koyu tema, glass panel UI ve modern oyun HUD tasarımı
+Son sürüm web sitesi hissinden çıkarılıp tam ekran bir **fantasy game HUD** görünümüne taşındı:
+
+- Dungeon / arena arka planı
+- Üst oyun HUD'u
+- Savaş rotası şeridi
+- Ortada savaş alanı
+- Sol oyuncu, sağ düşman kartı
+- Ortada büyü çemberi ve saldırı zamanlayıcısı
+- Altta oyun içi inventory console
+- Ahşap / metal / altın çerçeveli RPG panel stili
+
+## Özellikler
+
 - 4x4 lanetli çanta / envanter grid'i
 - Drag & drop eşya yerleştirme
 - Otomatik savaş sistemi
@@ -25,19 +37,15 @@ https://ademekiz1213.github.io/inventory-combat/
 
 ## Nasıl Çalıştırılır?
 
-Projeyi klonladıktan sonra klasörde basit bir statik sunucu açın:
-
 ```bash
 python3 -m http.server 8000
 ```
 
-Sonra tarayıcıda açın:
+Sonra:
 
 ```text
 http://localhost:8000
 ```
-
-Alternatif olarak `index.html` dosyasını doğrudan tarayıcıda açabilirsiniz.
 
 ## Oynanış
 
@@ -48,36 +56,6 @@ Alternatif olarak `index.html` dosyasını doğrudan tarayıcıda açabilirsiniz
 5. Eşyalar cooldown sürelerine göre otomatik çalışır.
 6. Savaşı kazanırsanız 3 ödülden 1 tanesini seçin.
 7. 5 savaşı tamamlamaya çalışın.
-
-## Başlangıç Eşyaları
-
-- Kılıç
-- Kalkan
-- Alev Taşı
-- İksir
-
-## Ödül Havuzu
-
-- Hançer
-- Balta
-- Zırh
-- Hız Yüzüğü
-- Kan Kristali
-- Buz Taşı
-- Diken
-- Bomba
-- Bariyer Taşı
-
-## Geliştirme Fikirleri
-
-- Çok kareli eşyalar
-- Eşya döndürme
-- Boss özel animasyonları
-- Mağaza ve altın ekonomisi
-- LocalStorage kayıt sistemi
-- Mobil drag/drop iyileştirmeleri
-- Ses efektleri ve müzik
-- Sprite asset paketi
 
 ## Lisans
 

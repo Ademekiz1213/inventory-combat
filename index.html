@@ -3,165 +3,130 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Inventory Combat — Cursed Backpack</title>
+  <title>Inventory Combat — Game HUD</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="world-glow glow-a"></div>
-  <div class="world-glow glow-b"></div>
-  <div class="noise-layer"></div>
+  <div class="game-bg"></div>
+  <div class="vignette"></div>
 
-  <div class="app-shell">
-    <header class="topbar">
-      <div class="brand-block">
-        <div class="brand-mark">✦</div>
-        <div>
-          <p class="eyebrow">Cursed Backpack / Web Prototype</p>
-          <h1>Inventory Combat</h1>
-          <p class="subline">Eşyaları yerleştir, sinerjileri aç, otomatik savaşı izle.</p>
-        </div>
+  <main class="game-screen">
+    <header class="game-top-hud">
+      <div class="crest">✦</div>
+      <div class="title-plaque">
+        <span class="kicker">Lanetli Çanta</span>
+        <h1>Inventory Combat</h1>
       </div>
-      <div class="run-stats">
-        <span>Bölge <strong>Mağara Yolu</strong></span>
-        <span>Savaş <strong id="battleNumber">1</strong>/<strong id="battleTotal">5</strong></span>
-        <span>Altın <strong id="gold">0</strong></span>
-        <button id="restartBtn" class="ghost-btn">↺ Yeniden Başlat</button>
+      <div class="hud-counters">
+        <div class="counter"><span>⚔</span><b id="battleNumber">1</b>/<b id="battleTotal">5</b></div>
+        <div class="counter"><span>🪙</span><b id="gold">0</b></div>
+        <button id="speedBtn" class="small-game-btn">1x Hız</button>
+        <button id="restartBtn" class="small-game-btn danger">↺</button>
       </div>
     </header>
 
-    <section class="run-roadmap panel-lite">
-      <div class="roadmap-head">
-        <span class="eyebrow">Run Rotası</span>
-        <span class="mono">Mini roguelike demo</span>
+    <section class="battle-track" id="battlePath"></section>
+
+    <section class="battlefield-frame">
+      <div class="battle-title-strip">
+        <div>
+          <span class="kicker">Savaş Alanı</span>
+          <h2 id="battleTitle">Hazırlık Aşaması</h2>
+        </div>
+        <button id="startBattleBtn" class="start-btn">SAVAŞI BAŞLAT</button>
       </div>
-      <div id="battlePath" class="battle-path"></div>
+
+      <div class="battlefield">
+        <aside id="playerCard" class="combatant-card hero-card">
+          <div class="nameplate">OYUNCU</div>
+          <div class="character-portrait hero-portrait">🧙</div>
+          <h3>Gezgin</h3>
+          <p>Lanetli çantanın taşıyıcısı</p>
+          <div class="resource-row"><span>CAN</span><strong id="playerHpText">50/50</strong></div>
+          <div class="game-bar hp-bar"><div id="playerHpBar"></div></div>
+          <div class="status-chips">
+            <div class="chip shield">🛡 <b id="playerBlock">0</b></div>
+            <div class="chip poison">☠ <b id="playerPoison">0</b></div>
+          </div>
+        </aside>
+
+        <div class="arena-center">
+          <div class="magic-circle">
+            <div class="timer-ring"><div id="enemyTimerFill"></div></div>
+            <span>VS</span>
+          </div>
+          <div class="arena-floor"></div>
+        </div>
+
+        <aside id="enemyCard" class="combatant-card enemy-card">
+          <div class="nameplate red">DÜŞMAN</div>
+          <div id="enemyIcon" class="character-portrait enemy-portrait">👺</div>
+          <h3 id="enemyName">Goblin</h3>
+          <p id="enemySubtitle">Temel tehdit</p>
+          <div class="resource-row"><span>CAN</span><strong id="enemyHpText">35/35</strong></div>
+          <div class="game-bar enemy-bar"><div id="enemyHpBar"></div></div>
+          <div class="status-chips">
+            <div class="chip shield">🛡 <b id="enemyBlock">0</b></div>
+            <div class="intent" id="enemyIntent">🗡️ 3 sn sonra 6 hasar</div>
+          </div>
+        </aside>
+      </div>
     </section>
 
-    <main class="game-layout">
-      <section class="panel combat-panel">
-        <div class="arena-head">
-          <div>
-            <p class="eyebrow">Taktik Savaş Alanı</p>
-            <h2 id="battleTitle">Hazırlık Aşaması</h2>
-          </div>
-          <div class="action-row">
-            <button id="speedBtn" class="ghost-btn">1x Hız</button>
-            <button id="startBattleBtn" class="primary-btn">Savaşı Başlat</button>
-          </div>
+    <section class="bottom-hud">
+      <aside class="side-panel stats-panel">
+        <div class="panel-header"><span>Build Gücü</span></div>
+        <div class="stat-grid">
+          <div><small>DPS</small><b id="dpsEstimate">0.0</b></div>
+          <div><small>Blok/sn</small><b id="blockEstimate">0.0</b></div>
+          <div><small>Sinerji</small><b id="synergyCount">0</b></div>
+          <div><small>Hasar</small><b id="runDamage">0</b></div>
         </div>
+        <div class="panel-header sub"><span>Aktif Sinerjiler</span></div>
+        <div id="synergyList" class="synergy-list"></div>
+      </aside>
 
-        <div class="fighters">
-          <article id="playerCard" class="fighter-card player-card">
-            <div class="card-shine"></div>
-            <div class="fighter-tag">Oyuncu</div>
-            <div class="sprite hero-sprite">🧙</div>
-            <h3>Gezgin</h3>
-            <p class="fighter-desc">Lanetli çantanın taşıyıcısı</p>
-            <div class="bar-label"><span>Can</span><strong id="playerHpText">50/50</strong></div>
-            <div class="bar"><div id="playerHpBar" class="bar-fill hp"></div></div>
-            <div class="fighter-stats">
-              <div class="stat-pill block">Blok <strong id="playerBlock">0</strong></div>
-              <div class="stat-pill poison">Zehir <strong id="playerPoison">0</strong></div>
-            </div>
-          </article>
-
-          <div class="versus">
-            <span>VS</span>
-            <div class="timer-orb"><div id="enemyTimerFill"></div></div>
-          </div>
-
-          <article id="enemyCard" class="fighter-card enemy-card">
-            <div class="card-shine"></div>
-            <div class="fighter-tag danger">Düşman</div>
-            <div id="enemyIcon" class="sprite enemy-sprite">👺</div>
-            <h3 id="enemyName">Goblin</h3>
-            <p class="fighter-desc" id="enemySubtitle">Temel tehdit</p>
-            <div class="bar-label"><span>Can</span><strong id="enemyHpText">35/35</strong></div>
-            <div class="bar"><div id="enemyHpBar" class="bar-fill enemy-hp"></div></div>
-            <div class="fighter-stats">
-              <div class="stat-pill block">Blok <strong id="enemyBlock">0</strong></div>
-              <div class="intent" id="enemyIntent">🗡️ 3 sn sonra 6 hasar</div>
-            </div>
-          </article>
+      <section class="inventory-console">
+        <div class="panel-header inventory-head">
+          <span>ÇANTA GRID'İ</span>
+          <b id="phaseBadge">Hazırlık</b>
         </div>
-
-        <div class="build-meter">
-          <div><span>Tahmini DPS</span><strong id="dpsEstimate">0.0</strong></div>
-          <div><span>Blok/sn</span><strong id="blockEstimate">0.0</strong></div>
-          <div><span>Aktif Sinerji</span><strong id="synergyCount">0</strong></div>
-          <div><span>Run Hasarı</span><strong id="runDamage">0</strong></div>
-        </div>
-
-        <div class="lower-combat-grid">
-          <div class="log-card">
-            <div class="card-title-row">
-              <h3>Savaş Günlüğü</h3>
-              <span class="mono">live feed</span>
-            </div>
-            <div id="combatLog" class="combat-log"></div>
-          </div>
-          <div class="synergy-card">
-            <div class="card-title-row">
-              <h3>Aktif Sinerjiler</h3>
-              <span class="mono">adjacency</span>
-            </div>
-            <div id="synergyList" class="synergy-list"></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel inventory-panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Lanetli Çanta</p>
-            <h2>4x4 Envanter Grid’i</h2>
-          </div>
-          <span id="phaseBadge" class="phase-badge">Hazırlık</span>
-        </div>
-
-        <div class="inventory-frame">
-          <div class="grid-runes">N E S W</div>
+        <div class="inventory-board">
           <div id="inventoryGrid" class="inventory-grid" aria-label="Inventory grid"></div>
         </div>
-
-        <div class="reserve-area">
-          <div class="card-title-row">
-            <h3>Yedek Eşyalar</h3>
-            <span class="mono">inactive</span>
-          </div>
-          <p>Sadece grid içindeki eşyalar savaşta çalışır. Yedekler build planlamak içindir.</p>
+        <div class="reserve-strip">
+          <div class="reserve-title">YEDEK</div>
           <div id="reserveItems" class="reserve-items"></div>
         </div>
-
-        <div class="tooltip-card">
-          <div class="card-title-row">
-            <h3 id="tooltipTitle">Eşya Bilgisi</h3>
-            <span class="mono">tooltip</span>
-          </div>
-          <div id="tooltipBody">Bir eşyanın üzerine gelerek etkilerini ve aktif bonuslarını gör.</div>
-        </div>
       </section>
-    </main>
-  </div>
+
+      <aside class="side-panel info-panel">
+        <div class="panel-header"><span id="tooltipTitle">Eşya Bilgisi</span></div>
+        <div id="tooltipBody" class="tooltip-body">Bir eşyaya tıkla veya üzerine gel. Bonusları ve cooldown bilgisini burada göreceksin.</div>
+        <div class="panel-header sub"><span>Savaş Günlüğü</span><em>live</em></div>
+        <div id="combatLog" class="combat-log"></div>
+      </aside>
+    </section>
+  </main>
 
   <div id="rewardModal" class="modal hidden">
-    <div class="modal-card reward-modal-card">
-      <p class="eyebrow">Zafer Kazanıldı</p>
-      <h2>Build’ini geliştirecek bir ödül seç</h2>
-      <p class="modal-copy">Seçilen eşya yedek alana gider. Sıradaki savaş öncesi çantaya yerleştirebilirsin.</p>
+    <div class="modal-card reward-modal-card game-window">
+      <span class="kicker">Zafer</span>
+      <h2>Bir ganimet seç</h2>
+      <p class="modal-copy">Seçilen eşya yedek alana eklenir. Sıradaki savaş öncesi çantaya yerleştir.</p>
       <div id="rewardChoices" class="reward-choices"></div>
     </div>
   </div>
 
   <div id="endModal" class="modal hidden">
-    <div class="modal-card">
-      <p class="eyebrow" id="endEyebrow">Run Bitti</p>
+    <div class="modal-card game-window">
+      <span class="kicker" id="endEyebrow">Run Bitti</span>
       <h2 id="endTitle">Sonuç</h2>
       <p id="endSummary" class="modal-copy"></p>
-      <button id="endRestartBtn" class="primary-btn">Tekrar Oyna</button>
+      <button id="endRestartBtn" class="start-btn">TEKRAR OYNA</button>
     </div>
   </div>
 
