@@ -8,16 +8,14 @@ https://ademekiz1213.github.io/inventory-combat/
 
 ## Güncel Yön: Oyun Arayüzü
 
-Son sürüm web sitesi hissinden çıkarılıp tam ekran bir **fantasy game HUD** görünümüne taşındı:
+Son sürüm referans görseldeki gibi daha kompakt bir **fantasy inventory battle HUD** düzenine taşındı:
 
-- Dungeon / arena arka planı
-- Üst oyun HUD'u
-- Savaş rotası şeridi
-- Ortada savaş alanı
-- Sol oyuncu, sağ düşman kartı
-- Ortada büyü çemberi ve saldırı zamanlayıcısı
-- Altta oyun içi inventory console
-- Ahşap / metal / altın çerçeveli RPG panel stili
+- Üstte bölge rotası, merkezde “Savaşa Hazırlan” modu, sağda altın/can sayaçları
+- Sol karakter paneli, karakter seçimi, aktif/yedek eşyalar ve build özeti
+- Ortada deri çanta hissi veren büyük envanter grid'i
+- Sol-orta dikey aksiyon rayı: döndür, sat, temizle
+- Sağda düşman niyeti paneli, düşman kartı ve büyük yeşil savaşa başla butonu
+- Altta referanstaki gibi eşya bilgisi / savaş günlüğü / kilitli ödül kartları
 
 ## Aşama 2 — Run Döngüsü
 
