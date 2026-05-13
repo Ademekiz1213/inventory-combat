@@ -1,6 +1,77 @@
 const GRID_SIZE = 4;
 const TOTAL_BATTLES = 5;
 
+const CHARACTERS = {
+  "warrior": {
+    "id": "warrior",
+    "name": "Savaşçı",
+    "icon": "🛡️",
+    "description": "Dengeli saldırı ve savunma. Yeni oyuncular için güvenli başlangıç.",
+    "baseMaxHp": 56,
+    "goldBonus": 0,
+    "startingItems": [
+      { itemId: "sword", slot: 0 },
+      { itemId: "fireStone", slot: 1 },
+      { itemId: "shield", slot: 4 },
+      { itemId: "armor", slot: 5 }
+    ],
+    "itemBonusDamage": 1,
+    "startBlockBonus": 2,
+    "traits": ["+6 maksimum can", "Silahlara +1 hasar", "Savaş başında +2 blok"]
+  },
+  "rogue": {
+    "id": "rogue",
+    "name": "Hırsız",
+    "icon": "🗡️",
+    "description": "Hızlı saldırılar, zehir ve erken ekonomiyle riskli ama patlayıcı build kurar.",
+    "baseMaxHp": 44,
+    "goldBonus": 4,
+    "startingItems": [
+      { itemId: "dagger", slot: 0 },
+      { itemId: "speedRing", slot: 1 },
+      { itemId: "throwingKnives", slot: 4 },
+      { itemId: "antidote", slot: 5 }
+    ],
+    "globalCooldownMultiplier": 0.9,
+    "poisonPower": 1,
+    "traits": ["-6 maksimum can", "+4 başlangıç altını", "Eşyalar %10 hızlı", "Zehir etkileri +1"]
+  },
+  "alchemist": {
+    "id": "alchemist",
+    "name": "Simyacı",
+    "icon": "🧪",
+    "description": "Tek kullanımlık eşyalar, element taşları ve iyileştirmeyle adaptif oynar.",
+    "baseMaxHp": 50,
+    "goldBonus": 6,
+    "startingItems": [
+      { itemId: "potion", slot: 0 },
+      { itemId: "fireStone", slot: 1 },
+      { itemId: "iceStone", slot: 4 },
+      { itemId: "bomb", slot: 5 }
+    ],
+    "consumableHealBonus": 4,
+    "startDamageBonus": 4,
+    "traits": ["+6 başlangıç altını", "İksirler +4 can iyileştirir", "Savaş başı hasarları +4"]
+  },
+  "guardian": {
+    "id": "guardian",
+    "name": "Gardiyan",
+    "icon": "🛡️",
+    "description": "Yüksek can, blok ve diken sinerjisiyle uzun savaşlarda dirençlidir.",
+    "baseMaxHp": 64,
+    "goldBonus": 0,
+    "startingItems": [
+      { itemId: "towerShield", slot: 0 },
+      { itemId: "thorn", slot: 1 },
+      { itemId: "armor", slot: 4 },
+      { itemId: "potion", slot: 5 }
+    ],
+    "startBlockBonus": 8,
+    "blockGainMultiplier": 1.15,
+    "traits": ["+14 maksimum can", "Blok üretimi %15 güçlü", "Savaş başında +8 blok"]
+  }
+};
+
 const ITEMS = {
   "sword": {
     "id": "sword",
@@ -647,6 +718,7 @@ const state = {
   stats: { damage: 0, blocked: 0 },
   runDamage: 0,
   speed: 1,
+  selectedCharacterId: "warrior",
   battleHistory: [],
   merchantStock: [],
   activeBonuses: new Map()
@@ -696,33 +768,88 @@ const el = {
   enemyCard: document.getElementById("enemyCard"),
   merchantModal: document.getElementById("merchantModal"),
   merchantChoices: document.getElementById("merchantChoices"),
-  merchantContinue: document.getElementById("merchantContinueBtn")
+  merchantContinue: document.getElementById("merchantContinueBtn"),
+  characterPanel: document.getElementById("characterPanel"),
+  characterChoices: document.getElementById("characterChoices"),
+  heroPortrait: document.getElementById("heroPortrait"),
+  heroName: document.getElementById("heroName"),
+  heroDescription: document.getElementById("heroDescription")
 };
 
 function createInstance(itemId) {
   return { instanceId: `item_${++uid}`, itemId, timer: 0, used: false, lockedFor: 0 };
 }
 
+function getSelectedCharacter() {
+  return CHARACTERS[state.selectedCharacterId] || CHARACTERS.warrior;
+}
+
+function applyCharacterLoadout(character = getSelectedCharacter()) {
+  state.inventory = Array(GRID_SIZE * GRID_SIZE).fill(null);
+  state.reserve = [];
+  for (const entry of character.startingItems) {
+    const instance = createInstance(entry.itemId);
+    if (Number.isInteger(entry.slot) && entry.slot >= 0 && entry.slot < state.inventory.length && !state.inventory[entry.slot]) {
+      state.inventory[entry.slot] = instance;
+    } else {
+      state.reserve.push(instance);
+    }
+  }
+  state.gold = character.goldBonus || 0;
+  state.player = { maxHp: character.baseMaxHp, hp: character.baseMaxHp, block: 0, poison: 0, bleed: 0 };
+}
+
+function selectCharacter(characterId) {
+  if (!CHARACTERS[characterId] || state.phase === "combat") return;
+  state.selectedCharacterId = characterId;
+  initGame();
+}
+
+function applyCharacterCombatStart(character = getSelectedCharacter()) {
+  if (character.startBlockBonus) {
+    state.player.block += character.startBlockBonus;
+    addLog(`${character.name} özelliği savaş başında ${character.startBlockBonus} blok verdi.`);
+  }
+}
+
+function renderCharacterChoices() {
+  if (!el.characterChoices) return;
+  el.characterChoices.innerHTML = "";
+  for (const character of Object.values(CHARACTERS)) {
+    const button = document.createElement("button");
+    button.className = "character-choice";
+    if (character.id === state.selectedCharacterId) button.classList.add("selected");
+    button.disabled = state.phase === "combat";
+    button.innerHTML = `<span>${character.icon}</span><strong>${character.name}</strong><small>${character.traits.join(" • ")}</small>`;
+    button.addEventListener("click", () => selectCharacter(character.id));
+    el.characterChoices.appendChild(button);
+  }
+}
+
+function renderSelectedCharacter() {
+  const character = getSelectedCharacter();
+  if (el.heroPortrait) el.heroPortrait.textContent = character.icon;
+  if (el.heroName) el.heroName.textContent = character.name;
+  if (el.heroDescription) el.heroDescription.textContent = character.description;
+}
+
 function initGame() {
   uid = 0;
   state.phase = "prep";
   state.battleIndex = 0;
-  state.gold = 0;
   state.inventory = Array(GRID_SIZE * GRID_SIZE).fill(null);
   state.reserve = [];
-  state.player = { maxHp: 50, hp: 50, block: 0, poison: 0, bleed: 0 };
+  applyCharacterLoadout();
   state.stats = { damage: 0, blocked: 0 };
   state.runDamage = 0;
   state.speed = 1;
   state.battleHistory = [];
   state.merchantStock = [];
   if (el.speedBtn) el.speedBtn.textContent = "1x Hız";
-  state.inventory[0] = createInstance("sword");
-  state.inventory[1] = createInstance("fireStone");
-  state.inventory[4] = createInstance("shield");
-  state.inventory[5] = createInstance("potion");
   prepareEnemy();
   clearLog();
+  const character = getSelectedCharacter();
+  addLog(`${character.name} seçildi: ${character.traits.join(" • ")}.`);
   addLog("Eşyaları sürükleyerek yerleştir. Güçlendiricileri silahların yanına koy.");
   renderAll();
 }
@@ -771,6 +898,8 @@ function renderAll() {
   renderReserve();
   renderStats();
   renderCombatants();
+  renderSelectedCharacter();
+  renderCharacterChoices();
   renderRoadmap();
   renderSynergies();
 }
@@ -908,12 +1037,15 @@ function getBonuses(instance) {
 
 function getEffectiveDamage(instance) {
   const item = ITEMS[instance.itemId];
-  return (item.damage || 0) + getBonuses(instance).reduce((sum, b) => sum + (b.damage || 0), 0);
+  const character = getSelectedCharacter();
+  const characterDamage = item.type === "weapon" ? (character.itemBonusDamage || 0) : 0;
+  return (item.damage || 0) + characterDamage + getBonuses(instance).reduce((sum, b) => sum + (b.damage || 0), 0);
 }
 
 function getEffectiveCooldown(instance) {
   const item = ITEMS[instance.itemId];
   let cooldown = item.cooldown || 999;
+  cooldown *= getSelectedCharacter().globalCooldownMultiplier || 1;
   for (const bonus of getBonuses(instance)) {
     if (bonus.cooldownMultiplier) cooldown *= bonus.cooldownMultiplier;
   }
@@ -1050,8 +1182,9 @@ function startCombat() {
   state.stats = { damage: 0, blocked: 0 };
   state.combatItems = state.inventory.filter(Boolean).map(i => ({ ...i, timer: 0, used: false, lockedFor: 0 }));
   const maxHpBonus = state.combatItems.reduce((sum, instance) => sum + (ITEMS[instance.itemId].maxHpBonus || 0), 0);
+  const character = getSelectedCharacter();
   const previousMaxHp = state.player.maxHp;
-  state.player.maxHp = 50 + maxHpBonus;
+  state.player.maxHp = character.baseMaxHp + maxHpBonus;
   if (state.player.maxHp > previousMaxHp) state.player.hp += state.player.maxHp - previousMaxHp;
   state.player.hp = Math.min(state.player.hp, state.player.maxHp);
   state.player.block = 0;
@@ -1065,16 +1198,19 @@ function startCombat() {
   state.lockTimer = 0;
   clearLog();
   addLog(`${state.enemy.name} ortaya çıktı!`);
+  applyCharacterCombatStart(character);
 
   for (const instance of state.combatItems) {
     const item = ITEMS[instance.itemId];
     if (item.startBlock) {
-      state.player.block += item.startBlock;
-      addLog(`${item.name} savaş başında ${item.startBlock} blok verdi.`);
+      const block = Math.ceil(item.startBlock * (character.blockGainMultiplier || 1));
+      state.player.block += block;
+      addLog(`${item.name} savaş başında ${block} blok verdi.`);
     }
     if (item.startDamage) {
-      damageEnemy(item.startDamage, item.name);
-      applyItemSpecialEffects(instance, item.startDamage);
+      const startDamage = item.startDamage + (character.startDamageBonus || 0);
+      damageEnemy(startDamage, item.name);
+      applyItemSpecialEffects(instance, startDamage);
       instance.used = true;
     }
   }
@@ -1108,7 +1244,7 @@ function updateCombat(dt) {
       }
     } else if (item.type === "consumable" && !instance.used && state.player.hp <= item.hpThreshold) {
       instance.used = true;
-      healPlayer(item.heal, item.name);
+      healPlayer(item.heal + (getSelectedCharacter().consumableHealBonus || 0), item.name);
       applyItemSpecialEffects(instance, item.heal);
       triggerVisual(instance.instanceId);
     }
@@ -1174,10 +1310,11 @@ function triggerItem(instance) {
     }
   }
   if (item.type === "defense") {
-    state.player.block += item.block;
-    if (item.selfBlock) state.player.block += item.selfBlock;
+    const block = Math.ceil(item.block * (getSelectedCharacter().blockGainMultiplier || 1));
+    state.player.block += block;
+    if (item.selfBlock) state.player.block += Math.ceil(item.selfBlock * (getSelectedCharacter().blockGainMultiplier || 1));
     if (item.cleansePoison) state.player.poison = Math.max(0, state.player.poison - item.cleansePoison);
-    addLog(`${item.name} ${item.block} blok verdi.`);
+    addLog(`${item.name} ${block} blok verdi.`);
     flash(el.playerCard, "blocked");
     for (const bonus of getBonuses(instance)) {
       if (bonus.reflect) damageEnemy(bonus.reflect, bonus.source);
@@ -1197,8 +1334,9 @@ function getSpecialDamage(instance) {
 function applyItemSpecialEffects(instance, damage = 0) {
   const item = ITEMS[instance.itemId];
   if (item.poison) {
-    state.enemy.poisoned = (state.enemy.poisoned || 0) + item.poison;
-    addLog(`${item.name} ${item.poison} zehir biriktirdi.`);
+    const poison = item.poison + (getSelectedCharacter().poisonPower || 0);
+    state.enemy.poisoned = (state.enemy.poisoned || 0) + poison;
+    addLog(`${item.name} ${poison} zehir biriktirdi.`);
   }
   if (item.bleed) {
     state.enemy.bleed = (state.enemy.bleed || 0) + item.bleed;
@@ -1210,8 +1348,9 @@ function applyItemSpecialEffects(instance, damage = 0) {
     if (broken > 0) addLog(`${item.name} ${broken} blok kırdı.`);
   }
   if (item.selfBlock && item.type !== "defense") {
-    state.player.block += item.selfBlock;
-    addLog(`${item.name} ${item.selfBlock} blok kazandırdı.`);
+    const selfBlock = Math.ceil(item.selfBlock * (getSelectedCharacter().blockGainMultiplier || 1));
+    state.player.block += selfBlock;
+    addLog(`${item.name} ${selfBlock} blok kazandırdı.`);
   }
   if (item.cleansePoison) {
     const before = state.player.poison;

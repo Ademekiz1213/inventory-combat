@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=deep-mechanics-20260513" />
+  <link rel="stylesheet" href="style.css?v=characters-20260513" />
 </head>
 <body>
   <div class="game-bg"></div>
@@ -32,6 +32,11 @@
 
     <section class="battle-track compact" id="battlePath"></section>
 
+    <section id="characterPanel" class="character-panel game-window">
+      <div class="panel-header"><span>Karakter Seçimi</span><em>başlangıç build'i değişir</em></div>
+      <div id="characterChoices" class="character-choices"></div>
+    </section>
+
     <section class="battlefield-frame">
       <div class="battle-title-strip">
         <div>
@@ -44,9 +49,9 @@
       <div class="battlefield">
         <aside id="playerCard" class="combatant-card hero-card">
           <div class="nameplate">OYUNCU</div>
-          <div class="character-portrait hero-portrait">🧙</div>
-          <h3>Gezgin</h3>
-          <p>Lanetli çantanın taşıyıcısı</p>
+          <div id="heroPortrait" class="character-portrait hero-portrait">🛡️</div>
+          <h3 id="heroName">Savaşçı</h3>
+          <p id="heroDescription">Dengeli saldırı ve savunma</p>
           <div class="resource-row"><span>CAN</span><strong id="playerHpText">50/50</strong></div>
           <div class="game-bar hp-bar"><div id="playerHpBar"></div></div>
           <div class="status-chips">
@@ -142,6 +147,6 @@
     </div>
   </div>
 
-  <script src="main.js?v=deep-mechanics-20260513"></script>
+  <script src="main.js?v=characters-20260513"></script>
 </body>
 </html>

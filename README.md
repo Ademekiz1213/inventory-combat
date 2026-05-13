@@ -29,6 +29,7 @@ Bu sürüm 2. aşama hedefini oyuna ekler:
 - 50 kartlık dengeli eşya havuzu: silah, savunma, pasif, tek kullanımlık, güçlendirici ve savaş başı kartları.
 - Zorluk dengesi güncellendi: düşman HP/hasar eğrisi artık basit başlangıç kılıcıyla tüm run'ı geçirmeyi cezalandırır.
 - Kartlar artık sadece hasar/saniye varyantı değil: zehir, kanama, blok delme, infaz, kırılganlık, zırh kırma, ramp-up hasar, yenilenme ve maksimum can gibi özel mekanikler var.
+- Karakter seçimi eklendi: Savaşçı, Hırsız, Simyacı ve Gardiyan farklı başlangıç eşyaları, can/altın değerleri ve özel pasiflerle oynanıyor.
 - Düşmanlar da özel mekanik kazandı: öfkelenme, zırh kırma, blok yenileme, kanama, zehir ve sık eşya kilitleme.
 - Her zaferden sonra altın kazanımı.
 - Savaş sonrası 3 ganimet kartından 1 eşya seçimi.
@@ -39,6 +40,7 @@ Bu sürüm 2. aşama hedefini oyuna ekler:
 ## Özellikler
 
 - 4x4 lanetli çanta / envanter grid'i
+- 4 oynanabilir karakter: Savaşçı, Hırsız, Simyacı, Gardiyan
 - 50 farklı kart/eşya ve kontrollü common → legendary nadirlik eğrisi
 - Drag & drop eşya yerleştirme
 - Otomatik savaş sistemi
@@ -67,13 +69,14 @@ http://localhost:8000
 
 ## Oynanış
 
-1. Eşyaları çantadaki 4x4 grid'e sürükleyin.
-2. Güçlendiricileri silahların veya savunma eşyalarının yanına koyarak sinerji açın.
-3. Aktif sinerji panelinden build'inizi kontrol edin.
-4. **Savaşı Başlat** butonuna basın.
-5. Eşyalar cooldown sürelerine göre otomatik çalışır.
-6. Savaşı kazanırsanız 3 ödülden 1 tanesini seçin.
-7. 5 savaşı tamamlamaya çalışın.
+1. Karakterini seç: Savaşçı güvenli, Hırsız hızlı/zehirli, Simyacı tüketilebilir odaklı, Gardiyan savunmacıdır.
+2. Eşyaları çantadaki 4x4 grid'e sürükleyin.
+3. Güçlendiricileri silahların veya savunma eşyalarının yanına koyarak sinerji açın.
+4. Aktif sinerji panelinden build'inizi kontrol edin.
+5. **Savaşı Başlat** butonuna basın.
+6. Eşyalar cooldown sürelerine göre otomatik çalışır.
+7. Savaşı kazanırsanız 3 ödülden 1 tanesini seçin.
+8. 5 savaşı tamamlamaya çalışın.
 
 ## Lisans
 
