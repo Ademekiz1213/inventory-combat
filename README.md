@@ -26,6 +26,7 @@ Bu sürüm 2. aşama hedefini oyuna ekler:
 - 5 savaşlık net rota: normal savaşlar, elit savaş ve mini boss.
 - Minimal durak şeridi: uzun metin yerine ikon + sıra numarası.
 - Tüccar durakları: altınla eşya satın alma veya can yenileme.
+- 50 kartlık dengeli eşya havuzu: silah, savunma, pasif, tek kullanımlık, güçlendirici ve savaş başı kartları.
 - Her zaferden sonra altın kazanımı.
 - Savaş sonrası 3 ganimet kartından 1 eşya seçimi.
 - Seçilen eşyanın yedek alana gelmesi ve sonraki savaş öncesi yeniden yerleştirilebilmesi.
@@ -35,6 +36,7 @@ Bu sürüm 2. aşama hedefini oyuna ekler:
 ## Özellikler
 
 - 4x4 lanetli çanta / envanter grid'i
+- 50 farklı kart/eşya ve kontrollü common → legendary nadirlik eğrisi
 - Drag & drop eşya yerleştirme
 - Otomatik savaş sistemi
 - Can, blok ve zehir göstergeleri

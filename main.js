@@ -2,70 +2,574 @@ const GRID_SIZE = 4;
 const TOTAL_BATTLES = 5;
 
 const ITEMS = {
-  sword: {
-    id: "sword", name: "Kılıç", type: "weapon", rarity: "common", icon: "⚔️",
-    cooldown: 2, damage: 5, tags: ["physical"],
-    description: "Her 2 saniyede 5 fiziksel hasar verir."
+  "sword": {
+    "id": "sword",
+    "name": "Kılıç",
+    "type": "weapon",
+    "rarity": "common",
+    "icon": "⚔️",
+    "cooldown": 2,
+    "damage": 5,
+    "tags": [
+      "physical"
+    ],
+    "description": "Her 2 saniyede 5 fiziksel hasar verir."
   },
-  dagger: {
-    id: "dagger", name: "Hançer", type: "weapon", rarity: "common", icon: "🗡️",
-    cooldown: 1, damage: 2, tags: ["physical", "fast"],
-    description: "Her 1 saniyede 2 hasar verir. Hızlı tetiklenir."
+  "dagger": {
+    "id": "dagger",
+    "name": "Hançer",
+    "type": "weapon",
+    "rarity": "common",
+    "icon": "🗡️",
+    "cooldown": 1,
+    "damage": 2,
+    "tags": [
+      "physical",
+      "fast"
+    ],
+    "description": "Her 1 saniyede 2 hasar verir. Hızlı tetiklenir."
   },
-  axe: {
-    id: "axe", name: "Balta", type: "weapon", rarity: "uncommon", icon: "🪓",
-    cooldown: 3.5, damage: 11, tags: ["physical", "heavy"],
-    description: "Yavaş ama güçlüdür. Her 3.5 saniyede 11 hasar verir."
+  "spear": {
+    "id": "spear",
+    "name": "Mızrak",
+    "type": "weapon",
+    "rarity": "common",
+    "icon": "🔱",
+    "cooldown": 2.4,
+    "damage": 6,
+    "tags": [
+      "physical"
+    ],
+    "description": "Her 2.4 saniyede 6 hasar verir. Dengeli menzilli saldırı."
   },
-  shield: {
-    id: "shield", name: "Kalkan", type: "defense", rarity: "common", icon: "🛡️",
-    cooldown: 3, block: 5,
-    description: "Her 3 saniyede 5 blok verir."
+  "club": {
+    "id": "club",
+    "name": "Sopa",
+    "type": "weapon",
+    "rarity": "common",
+    "icon": "🏏",
+    "cooldown": 2.8,
+    "damage": 7,
+    "tags": [
+      "physical",
+      "heavy"
+    ],
+    "description": "Her 2.8 saniyede 7 hasar verir. Yavaş ama güvenilir."
   },
-  armor: {
-    id: "armor", name: "Zırh", type: "passive", rarity: "common", icon: "🥋",
-    startBlock: 10,
-    description: "Savaş başında 10 blok verir."
+  "sling": {
+    "id": "sling",
+    "name": "Sapan",
+    "type": "weapon",
+    "rarity": "common",
+    "icon": "🪃",
+    "cooldown": 1.6,
+    "damage": 3,
+    "tags": [
+      "physical",
+      "fast"
+    ],
+    "description": "Her 1.6 saniyede 3 hasar verir. Erken oyunda hızlı baskı kurar."
   },
-  potion: {
-    id: "potion", name: "İksir", type: "consumable", rarity: "common", icon: "🧪",
-    heal: 12, hpThreshold: 18,
-    description: "Can 18'in altına düşünce bir kez 12 can iyileştirir."
+  "shortBow": {
+    "id": "shortBow",
+    "name": "Kısa Yay",
+    "type": "weapon",
+    "rarity": "common",
+    "icon": "🏹",
+    "cooldown": 2.2,
+    "damage": 5,
+    "tags": [
+      "physical"
+    ],
+    "description": "Her 2.2 saniyede 5 hasar verir. Komşuluk bonuslarından iyi faydalanır."
   },
-  fireStone: {
-    id: "fireStone", name: "Alev Taşı", type: "booster", rarity: "uncommon", icon: "🔥",
-    bonus: { targetType: "weapon", damage: 3, label: "+3 ateş hasarı" },
-    description: "Yanındaki silahlara +3 ateş hasarı verir."
+  "shield": {
+    "id": "shield",
+    "name": "Kalkan",
+    "type": "defense",
+    "rarity": "common",
+    "icon": "🛡️",
+    "cooldown": 3,
+    "block": 5,
+    "description": "Her 3 saniyede 5 blok verir."
   },
-  speedRing: {
-    id: "speedRing", name: "Hız Yüzüğü", type: "booster", rarity: "rare", icon: "💍",
-    bonus: { targetType: "weapon", cooldownMultiplier: 0.8, label: "%20 daha hızlı" },
-    description: "Yanındaki silahların cooldown süresini %20 azaltır."
+  "buckler": {
+    "id": "buckler",
+    "name": "Küçük Kalkan",
+    "type": "defense",
+    "rarity": "common",
+    "icon": "🔰",
+    "cooldown": 2.2,
+    "block": 3,
+    "description": "Her 2.2 saniyede 3 blok verir. Sık tetiklenir."
   },
-  bloodCrystal: {
-    id: "bloodCrystal", name: "Kan Kristali", type: "booster", rarity: "rare", icon: "🩸",
-    bonus: { targetType: "weapon", lifesteal: 0.25, label: "%25 can çalma" },
-    description: "Yanındaki silahlar verdiği hasarın %25'i kadar can çalar."
+  "woodenGuard": {
+    "id": "woodenGuard",
+    "name": "Tahta Muhafız",
+    "type": "defense",
+    "rarity": "common",
+    "icon": "🪵",
+    "cooldown": 4,
+    "block": 6,
+    "description": "Her 4 saniyede 6 blok verir. Basit savunma sağlar."
   },
-  iceStone: {
-    id: "iceStone", name: "Buz Taşı", type: "booster", rarity: "uncommon", icon: "❄️",
-    bonus: { targetType: "weapon", slow: 0.35, label: "düşman saldırısını geciktirir" },
-    description: "Yanındaki silahlar vurduğunda düşmanın saldırısını biraz geciktirir."
+  "ironGuard": {
+    "id": "ironGuard",
+    "name": "Demir Muhafız",
+    "type": "defense",
+    "rarity": "common",
+    "icon": "⛓️",
+    "cooldown": 4,
+    "block": 7,
+    "description": "Her 4 saniyede 7 blok verir. Orta tempolu blok üretir."
   },
-  thorn: {
-    id: "thorn", name: "Diken", type: "booster", rarity: "uncommon", icon: "🌵",
-    bonus: { targetType: "defense", reflect: 2, label: "blok üretince 2 hasar" },
-    description: "Yanındaki kalkanlar blok üretince düşmana 2 hasar verir."
+  "armor": {
+    "id": "armor",
+    "name": "Zırh",
+    "type": "passive",
+    "rarity": "common",
+    "icon": "🥋",
+    "startBlock": 10,
+    "description": "Savaş başında 10 blok verir."
   },
-  bomb: {
-    id: "bomb", name: "Bomba", type: "start", rarity: "uncommon", icon: "💣",
-    startDamage: 15,
-    description: "Savaş başında bir kez 15 hasar verir."
+  "travelCloak": {
+    "id": "travelCloak",
+    "name": "Yolcu Pelerini",
+    "type": "passive",
+    "rarity": "common",
+    "icon": "🧥",
+    "startBlock": 6,
+    "description": "Savaş başında 6 blok verir. Hafif ama ucuz koruma."
   },
-  barrierStone: {
-    id: "barrierStone", name: "Bariyer Taşı", type: "defense", rarity: "rare", icon: "🔷",
-    cooldown: 5, block: 8,
-    description: "Her 5 saniyede 8 blok verir."
+  "luckyCharm": {
+    "id": "luckyCharm",
+    "name": "Şans Tılsımı",
+    "type": "passive",
+    "rarity": "common",
+    "icon": "🍀",
+    "startBlock": 4,
+    "description": "Savaş başında 4 blok verir. Küçük bir güvenlik payı yaratır."
+  },
+  "potion": {
+    "id": "potion",
+    "name": "İksir",
+    "type": "consumable",
+    "rarity": "common",
+    "icon": "🧪",
+    "heal": 12,
+    "hpThreshold": 18,
+    "description": "Can 18'in altına düşünce bir kez 12 can iyileştirir."
+  },
+  "bandage": {
+    "id": "bandage",
+    "name": "Sargı Bezi",
+    "type": "consumable",
+    "rarity": "common",
+    "icon": "🩹",
+    "heal": 8,
+    "hpThreshold": 22,
+    "description": "Can 22'nin altına düşünce bir kez 8 can iyileştirir."
+  },
+  "antidote": {
+    "id": "antidote",
+    "name": "Panzehir",
+    "type": "consumable",
+    "rarity": "common",
+    "icon": "💚",
+    "heal": 10,
+    "hpThreshold": 16,
+    "description": "Can 16'nın altına düşünce bir kez 10 can iyileştirir."
+  },
+  "whetstone": {
+    "id": "whetstone",
+    "name": "Bileği Taşı",
+    "type": "booster",
+    "rarity": "common",
+    "icon": "🪨",
+    "bonus": {
+      "targetType": "weapon",
+      "damage": 1,
+      "label": "+1 hasar"
+    },
+    "description": "Yanındaki silahlara +1 hasar verir."
+  },
+  "bomb": {
+    "id": "bomb",
+    "name": "Bomba",
+    "type": "start",
+    "rarity": "common",
+    "icon": "💣",
+    "startDamage": 15,
+    "description": "Savaş başında bir kez 15 hasar verir."
+  },
+  "axe": {
+    "id": "axe",
+    "name": "Balta",
+    "type": "weapon",
+    "rarity": "uncommon",
+    "icon": "🪓",
+    "cooldown": 3.5,
+    "damage": 11,
+    "tags": [
+      "physical",
+      "heavy"
+    ],
+    "description": "Yavaş ama güçlüdür. Her 3.5 saniyede 11 hasar verir."
+  },
+  "mace": {
+    "id": "mace",
+    "name": "Topuz",
+    "type": "weapon",
+    "rarity": "uncommon",
+    "icon": "🔨",
+    "cooldown": 3,
+    "damage": 9,
+    "tags": [
+      "physical",
+      "heavy"
+    ],
+    "description": "Her 3 saniyede 9 hasar verir. Bloklu düşmanlara karşı istikrarlı baskı kurar."
+  },
+  "rapier": {
+    "id": "rapier",
+    "name": "İnce Kılıç",
+    "type": "weapon",
+    "rarity": "uncommon",
+    "icon": "🤺",
+    "cooldown": 1.4,
+    "damage": 4,
+    "tags": [
+      "physical",
+      "fast"
+    ],
+    "description": "Her 1.4 saniyede 4 hasar verir. Hız odaklı buildlere uygundur."
+  },
+  "crossbow": {
+    "id": "crossbow",
+    "name": "Arbalet",
+    "type": "weapon",
+    "rarity": "uncommon",
+    "icon": "🎯",
+    "cooldown": 2.8,
+    "damage": 9,
+    "tags": [
+      "physical"
+    ],
+    "description": "Her 2.8 saniyede 9 hasar verir. Tek vuruşu güçlüdür."
+  },
+  "fireWand": {
+    "id": "fireWand",
+    "name": "Ateş Asası",
+    "type": "weapon",
+    "rarity": "uncommon",
+    "icon": "🪄",
+    "cooldown": 2.5,
+    "damage": 8,
+    "tags": [
+      "fire"
+    ],
+    "description": "Her 2.5 saniyede 8 hasar verir. Ateş buildleri için iyi merkezdir."
+  },
+  "towerShield": {
+    "id": "towerShield",
+    "name": "Kule Kalkanı",
+    "type": "defense",
+    "rarity": "uncommon",
+    "icon": "🏰",
+    "cooldown": 5,
+    "block": 12,
+    "description": "Her 5 saniyede 12 blok verir. Büyük ama yavaş savunma sağlar."
+  },
+  "wardTotem": {
+    "id": "wardTotem",
+    "name": "Muhafız Totemi",
+    "type": "defense",
+    "rarity": "uncommon",
+    "icon": "🗿",
+    "cooldown": 3.2,
+    "block": 6,
+    "description": "Her 3.2 saniyede 6 blok verir. Dengeli savunma üretir."
+  },
+  "scaleVest": {
+    "id": "scaleVest",
+    "name": "Pul Yelek",
+    "type": "defense",
+    "rarity": "uncommon",
+    "icon": "🦺",
+    "cooldown": 4.5,
+    "block": 8,
+    "description": "Her 4.5 saniyede 8 blok verir. Uzun savaşlarda dayanıklılık verir."
+  },
+  "spikedArmor": {
+    "id": "spikedArmor",
+    "name": "Dikenli Zırh",
+    "type": "passive",
+    "rarity": "uncommon",
+    "icon": "🦔",
+    "startBlock": 12,
+    "description": "Savaş başında 12 blok verir. Savunma buildleri için sağlam taban."
+  },
+  "warmBoots": {
+    "id": "warmBoots",
+    "name": "Sıcak Çizmeler",
+    "type": "passive",
+    "rarity": "uncommon",
+    "icon": "🥾",
+    "startBlock": 9,
+    "description": "Savaş başında 9 blok verir. Buz ve yavaş savaş temalarıyla uyumludur."
+  },
+  "greaterPotion": {
+    "id": "greaterPotion",
+    "name": "Büyük İksir",
+    "type": "consumable",
+    "rarity": "uncommon",
+    "icon": "🍷",
+    "heal": 16,
+    "hpThreshold": 20,
+    "description": "Can 20'nin altına düşünce bir kez 16 can iyileştirir."
+  },
+  "smokeVial": {
+    "id": "smokeVial",
+    "name": "Duman Şişesi",
+    "type": "consumable",
+    "rarity": "uncommon",
+    "icon": "🌫️",
+    "heal": 14,
+    "hpThreshold": 14,
+    "description": "Can 14'ün altına düşünce bir kez 14 can iyileştirir."
+  },
+  "fireStone": {
+    "id": "fireStone",
+    "name": "Alev Taşı",
+    "type": "booster",
+    "rarity": "uncommon",
+    "icon": "🔥",
+    "bonus": {
+      "targetType": "weapon",
+      "damage": 3,
+      "label": "+3 ateş hasarı"
+    },
+    "description": "Yanındaki silahlara +3 ateş hasarı verir."
+  },
+  "iceStone": {
+    "id": "iceStone",
+    "name": "Buz Taşı",
+    "type": "booster",
+    "rarity": "uncommon",
+    "icon": "❄️",
+    "bonus": {
+      "targetType": "weapon",
+      "slow": 0.35,
+      "label": "düşman saldırısını geciktirir"
+    },
+    "description": "Yanındaki silahlar vurduğunda düşmanın saldırısını biraz geciktirir."
+  },
+  "thorn": {
+    "id": "thorn",
+    "name": "Diken",
+    "type": "booster",
+    "rarity": "uncommon",
+    "icon": "🌵",
+    "bonus": {
+      "targetType": "defense",
+      "reflect": 2,
+      "label": "blok üretince 2 hasar"
+    },
+    "description": "Yanındaki kalkanlar blok üretince düşmana 2 hasar verir."
+  },
+  "throwingKnives": {
+    "id": "throwingKnives",
+    "name": "Fırlatma Bıçakları",
+    "type": "start",
+    "rarity": "uncommon",
+    "icon": "🔪",
+    "startDamage": 12,
+    "description": "Savaş başında bir kez 12 hasar verir. Kısa savaşları hızlandırır."
+  },
+  "twinBlades": {
+    "id": "twinBlades",
+    "name": "Çift Bıçak",
+    "type": "weapon",
+    "rarity": "rare",
+    "icon": "⚔️",
+    "cooldown": 1.5,
+    "damage": 6,
+    "tags": [
+      "physical",
+      "fast"
+    ],
+    "description": "Her 1.5 saniyede 6 hasar verir. Bonuslarla çok iyi ölçeklenir."
+  },
+  "frostStaff": {
+    "id": "frostStaff",
+    "name": "Buz Asası",
+    "type": "weapon",
+    "rarity": "rare",
+    "icon": "🧊",
+    "cooldown": 2.6,
+    "damage": 10,
+    "tags": [
+      "ice"
+    ],
+    "description": "Her 2.6 saniyede 10 hasar verir. Yavaşlatma taşlarıyla güvenli oynar."
+  },
+  "warhammer": {
+    "id": "warhammer",
+    "name": "Savaş Çekici",
+    "type": "weapon",
+    "rarity": "rare",
+    "icon": "🔨",
+    "cooldown": 4,
+    "damage": 16,
+    "tags": [
+      "physical",
+      "heavy"
+    ],
+    "description": "Her 4 saniyede 16 hasar verir. Büyük tek vuruş odaklıdır."
+  },
+  "barrierStone": {
+    "id": "barrierStone",
+    "name": "Bariyer Taşı",
+    "type": "defense",
+    "rarity": "rare",
+    "icon": "🔷",
+    "cooldown": 5,
+    "block": 8,
+    "description": "Her 5 saniyede 8 blok verir."
+  },
+  "vampireCharm": {
+    "id": "vampireCharm",
+    "name": "Vampir Tılsımı",
+    "type": "passive",
+    "rarity": "rare",
+    "icon": "🦇",
+    "startBlock": 8,
+    "description": "Savaş başında 8 blok verir. Can çalma buildlerine güvenli başlangıç sağlar."
+  },
+  "elixir": {
+    "id": "elixir",
+    "name": "Eliksir",
+    "type": "consumable",
+    "rarity": "rare",
+    "icon": "⚗️",
+    "heal": 22,
+    "hpThreshold": 15,
+    "description": "Can 15'in altına düşünce bir kez 22 can iyileştirir."
+  },
+  "speedRing": {
+    "id": "speedRing",
+    "name": "Hız Yüzüğü",
+    "type": "booster",
+    "rarity": "rare",
+    "icon": "💍",
+    "bonus": {
+      "targetType": "weapon",
+      "cooldownMultiplier": 0.8,
+      "label": "%20 daha hızlı"
+    },
+    "description": "Yanındaki silahların cooldown süresini %20 azaltır."
+  },
+  "bloodCrystal": {
+    "id": "bloodCrystal",
+    "name": "Kan Kristali",
+    "type": "booster",
+    "rarity": "rare",
+    "icon": "🩸",
+    "bonus": {
+      "targetType": "weapon",
+      "lifesteal": 0.25,
+      "label": "%25 can çalma"
+    },
+    "description": "Yanındaki silahlar verdiği hasarın %25'i kadar can çalar."
+  },
+  "focusLens": {
+    "id": "focusLens",
+    "name": "Odak Merceği",
+    "type": "booster",
+    "rarity": "rare",
+    "icon": "🔎",
+    "bonus": {
+      "targetType": "weapon",
+      "damage": 2,
+      "label": "+2 hasar"
+    },
+    "description": "Yanındaki silahlara +2 hasar ve daha net tempo verir."
+  },
+  "holyWater": {
+    "id": "holyWater",
+    "name": "Kutsal Su",
+    "type": "start",
+    "rarity": "rare",
+    "icon": "💧",
+    "startDamage": 20,
+    "description": "Savaş başında bir kez 20 hasar verir. Mini boss öncesi güçlüdür."
+  },
+  "phoenixFeather": {
+    "id": "phoenixFeather",
+    "name": "Anka Tüyü",
+    "type": "passive",
+    "rarity": "epic",
+    "icon": "🪶",
+    "startBlock": 16,
+    "description": "Savaş başında 16 blok verir. Riskli buildlere ikinci nefes sağlar."
+  },
+  "amplifier": {
+    "id": "amplifier",
+    "name": "Güç Yankısı",
+    "type": "booster",
+    "rarity": "epic",
+    "icon": "📣",
+    "bonus": {
+      "targetType": "weapon",
+      "damage": 4,
+      "label": "+4 hasar"
+    },
+    "description": "Yanındaki silahlara +4 hasar verir. Az sayıda güçlü silahı öne çıkarır."
+  },
+  "mirrorShard": {
+    "id": "mirrorShard",
+    "name": "Ayna Parçası",
+    "type": "booster",
+    "rarity": "epic",
+    "icon": "🪞",
+    "bonus": {
+      "targetType": "defense",
+      "cooldownMultiplier": 0.85,
+      "label": "%15 daha hızlı blok"
+    },
+    "description": "Yanındaki savunma eşyaları %15 daha hızlı blok üretir."
+  },
+  "meteorShard": {
+    "id": "meteorShard",
+    "name": "Meteor Parçası",
+    "type": "start",
+    "rarity": "epic",
+    "icon": "☄️",
+    "startDamage": 25,
+    "description": "Savaş başında bir kez 25 hasar verir. Burst buildlerinin çekirdeğidir."
+  },
+  "poisonBomb": {
+    "id": "poisonBomb",
+    "name": "Zehir Bombası",
+    "type": "start",
+    "rarity": "epic",
+    "icon": "☠️",
+    "startDamage": 18,
+    "description": "Savaş başında bir kez 18 hasar verir. Uzun savaşa girmeden tempo kazandırır."
+  },
+  "blackMirror": {
+    "id": "blackMirror",
+    "name": "Kara Ayna",
+    "type": "booster",
+    "rarity": "legendary",
+    "icon": "🖤",
+    "bonus": {
+      "targetType": "weapon",
+      "damage": 2,
+      "cooldownMultiplier": 1.2,
+      "label": "+2 hasar, %20 daha yavaş"
+    },
+    "description": "Yanındaki silaha +2 hasar verir ama ritmini %20 yavaşlatır. Güçlü tek silah buildleri için riskli ödül."
   }
 };
 
@@ -87,8 +591,9 @@ const RUN_ENCOUNTERS = [
   { type: "battle", enemyId: "bagBiter", role: "miniBoss", label: "Çanta Yiyen İn", rewardGold: 18 }
 ];
 
-const REWARD_POOL = ["dagger", "axe", "armor", "speedRing", "bloodCrystal", "iceStone", "thorn", "bomb", "barrierStone", "fireStone", "shield"];
-const MERCHANT_POOL = ["axe", "armor", "speedRing", "bloodCrystal", "barrierStone", "bomb", "iceStone", "thorn"];
+const REWARD_POOL = ["sword", "dagger", "spear", "club", "sling", "shortBow", "shield", "buckler", "woodenGuard", "ironGuard", "armor", "travelCloak", "luckyCharm", "potion", "bandage", "antidote", "whetstone", "bomb", "axe", "mace", "rapier", "crossbow", "fireWand", "towerShield", "wardTotem", "scaleVest", "spikedArmor", "warmBoots", "greaterPotion", "smokeVial", "fireStone", "iceStone", "thorn", "throwingKnives", "twinBlades", "frostStaff", "warhammer", "barrierStone", "vampireCharm", "elixir", "speedRing", "bloodCrystal", "focusLens", "holyWater", "phoenixFeather", "amplifier", "mirrorShard", "meteorShard", "poisonBomb", "blackMirror"];
+const MERCHANT_POOL = ["sword", "dagger", "spear", "shortBow", "axe", "mace", "rapier", "crossbow", "fireWand", "shield", "buckler", "towerShield", "wardTotem", "barrierStone", "armor", "spikedArmor", "potion", "greaterPotion", "elixir", "fireStone", "iceStone", "thorn", "speedRing", "bloodCrystal", "focusLens", "bomb", "throwingKnives", "holyWater"];
+const RARITY_REWARD_WEIGHTS = { common: 24, uncommon: 16, rare: 8, epic: 4, legendary: 1 };
 
 let uid = 0;
 let animationFrame = null;
@@ -707,10 +1212,15 @@ function loseRun() {
   renderAll();
 }
 
+function getRarityPrice(rarity, index = 0) {
+  const prices = { common: 7, uncommon: 10, rare: 14, epic: 18, legendary: 24 };
+  return prices[rarity] || (index === 0 ? 7 : 10);
+}
+
 function getMerchantStock(count = 3) {
   return [...new Set(shuffle([...MERCHANT_POOL]))].slice(0, count).map((itemId, index) => ({
     itemId,
-    price: ITEMS[itemId].rarity === "rare" ? 14 : index === 0 ? 7 : 10
+    price: Math.max(6, getRarityPrice(ITEMS[itemId].rarity, index) - (index === 0 ? 1 : 0))
   }));
 }
 
@@ -772,11 +1282,14 @@ function continueFromMerchant() {
 
 function getRewardChoices(count = 3) {
   const ownedTypes = state.inventory.concat(state.reserve).filter(Boolean).map(instance => ITEMS[instance.itemId].type);
-  const weighted = REWARD_POOL.flatMap(itemId => {
+  const weighted = [];
+  for (const itemId of REWARD_POOL) {
     const item = ITEMS[itemId];
-    const weight = ownedTypes.includes(item.type) ? 2 : 1;
-    return Array(weight).fill(itemId);
-  });
+    const rarityWeight = RARITY_REWARD_WEIGHTS[item.rarity] || 1;
+    const typeWeight = ownedTypes.includes(item.type) ? 2 : 1;
+    const tickets = Math.max(1, Math.round(rarityWeight * typeWeight));
+    for (let i = 0; i < tickets; i++) weighted.push(itemId);
+  }
   return [...new Set(shuffle(weighted))].slice(0, count);
 }
 
