@@ -19,6 +19,17 @@ Son sürüm web sitesi hissinden çıkarılıp tam ekran bir **fantasy game HUD*
 - Altta oyun içi inventory console
 - Ahşap / metal / altın çerçeveli RPG panel stili
 
+## Aşama 2 — Run Döngüsü
+
+Bu sürüm 2. aşama hedefini oyuna ekler:
+
+- 5 savaşlık net rota: normal savaşlar, elit savaş ve mini boss.
+- Her zaferden sonra altın kazanımı.
+- Savaş sonrası 3 ganimet kartından 1 eşya seçimi.
+- Seçilen eşyanın yedek alana gelmesi ve sonraki savaş öncesi yeniden yerleştirilebilmesi.
+- Üst HUD'da mevcut durak ve ödül/progresyon önizlemesi.
+- Run sonunda temizlenen savaş, toplam altın ve toplam hasar özeti.
+
 ## Özellikler
 
 - 4x4 lanetli çanta / envanter grid'i

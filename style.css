@@ -95,6 +95,9 @@ button { font: inherit; cursor: pointer; color: inherit; }
   font-weight: 800;
 }
 .counter span { margin-right: 5px; }
+.stage-counter, .reward-counter { max-width: 230px; }
+.stage-counter b, .reward-counter b { display: inline-block; max-width: 176px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }
+.reward-counter { color: #ffe3a8; }
 .small-game-btn:hover { border-color: var(--gold); }
 .small-game-btn.danger { color: #ffb2a8; }
 
@@ -117,6 +120,8 @@ button { font: inherit; cursor: pointer; color: inherit; }
 .path-node strong { color: var(--ink); display: block; font-size: .88rem; }
 .path-node small { color: var(--muted); }
 .path-node.active { border-color: var(--gold); box-shadow: 0 0 22px rgba(242,184,75,.25), inset 0 0 18px rgba(242,184,75,.1); }
+.path-node.elite { border-color: rgba(154,117,255,.38); }
+.path-node.boss { border-color: rgba(214,75,63,.48); background: linear-gradient(180deg, rgba(68,24,20,.92), rgba(12,8,6,.94)); }
 .path-node.done { border-color: rgba(67,201,111,.45); opacity: .78; }
 
 .battlefield-frame { border-radius: 20px; padding: 12px; position: relative; overflow: hidden; }

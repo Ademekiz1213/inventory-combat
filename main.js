@@ -77,6 +77,14 @@ const ENEMIES = [
   { id: "bagBiter", name: "Çanta Kemiren", icon: "🐗", hp: 78, block: 8, attackDamage: 8, attackCooldown: 3.2, lockCooldown: 6, lockDuration: 2.2, intent: "🔒 Ara sıra eşya kilitler" }
 ];
 
+const RUN_ENCOUNTERS = [
+  { enemyId: "goblin", role: "normal", label: "Mağara Girişi", rewardGold: 5 },
+  { enemyId: "rat", role: "normal", label: "Dar Tünel", rewardGold: 7 },
+  { enemyId: "beetle", role: "elite", label: "Zırhlı Geçit", rewardGold: 10 },
+  { enemyId: "spider", role: "normal", label: "Zehir Yuvası", rewardGold: 12 },
+  { enemyId: "bagBiter", role: "miniBoss", label: "Çanta Yiyen İn", rewardGold: 18 }
+];
+
 const REWARD_POOL = ["dagger", "axe", "armor", "speedRing", "bloodCrystal", "iceStone", "thorn", "bomb", "barrierStone", "fireStone", "shield"];
 
 let uid = 0;
@@ -98,6 +106,7 @@ const state = {
   stats: { damage: 0, blocked: 0 },
   runDamage: 0,
   speed: 1,
+  battleHistory: [],
   activeBonuses: new Map()
 };
 
@@ -122,6 +131,8 @@ const el = {
   synergyList: document.getElementById("synergyList"),
   speedBtn: document.getElementById("speedBtn"),
   runDamage: document.getElementById("runDamage"),
+  runStage: document.getElementById("runStage"),
+  nextRewardPreview: document.getElementById("nextRewardPreview"),
   enemyName: document.getElementById("enemyName"),
   enemyIcon: document.getElementById("enemyIcon"),
   enemyHpText: document.getElementById("enemyHpText"),
@@ -158,6 +169,7 @@ function initGame() {
   state.stats = { damage: 0, blocked: 0 };
   state.runDamage = 0;
   state.speed = 1;
+  state.battleHistory = [];
   if (el.speedBtn) el.speedBtn.textContent = "1x Hız";
   state.inventory[0] = createInstance("sword");
   state.inventory[1] = createInstance("fireStone");
@@ -169,9 +181,18 @@ function initGame() {
   renderAll();
 }
 
+function getCurrentEncounter() {
+  return RUN_ENCOUNTERS[state.battleIndex] || RUN_ENCOUNTERS[RUN_ENCOUNTERS.length - 1];
+}
+
+function getEnemyById(enemyId) {
+  return ENEMIES.find(enemy => enemy.id === enemyId) || ENEMIES[0];
+}
+
 function prepareEnemy() {
-  const base = ENEMIES[state.battleIndex];
-  state.enemy = { ...base, maxHp: base.hp, timer: 0 };
+  const encounter = getCurrentEncounter();
+  const base = getEnemyById(encounter.enemyId);
+  state.enemy = { ...base, encounterRole: encounter.role, encounterLabel: encounter.label, maxHp: base.hp, timer: 0 };
   state.enemyTimer = 0;
   state.lockTimer = 0;
 }
@@ -356,22 +377,27 @@ function typeLabel(type) {
 }
 
 function enemySubtitle(enemy) {
-  if (enemy.lockCooldown) return "Mini boss • eşya kilitler";
-  if (enemy.poison) return "Zehir tehdidi • uzun savaş tehlikeli";
-  if (enemy.block > 0) return "Zırhlı hedef • bloklu başlangıç";
-  if (enemy.attackCooldown < 2) return "Hızlı saldırgan • blok önemli";
-  return "Temel tehdit • build testi";
+  const role = enemy.encounterRole === "miniBoss" ? "Mini boss" : enemy.encounterRole === "elite" ? "Elit savaş" : "Normal savaş";
+  if (enemy.lockCooldown) return `${role} • eşya kilitler`;
+  if (enemy.poison) return `${role} • zehir tehdidi`;
+  if (enemy.block > 0) return `${role} • bloklu başlangıç`;
+  if (enemy.attackCooldown < 2) return `${role} • hızlı saldırgan`;
+  return `${role} • build testi`;
 }
 
 function renderRoadmap() {
   if (!el.battlePath) return;
   el.battlePath.innerHTML = "";
-  ENEMIES.slice(0, TOTAL_BATTLES).forEach((enemy, index) => {
+  RUN_ENCOUNTERS.forEach((encounter, index) => {
+    const enemy = getEnemyById(encounter.enemyId);
     const node = document.createElement("div");
     node.className = "path-node";
+    if (encounter.role === "elite") node.classList.add("elite");
+    if (encounter.role === "miniBoss") node.classList.add("boss");
     if (index < state.battleIndex) node.classList.add("done");
     if (index === state.battleIndex) node.classList.add("active");
-    node.innerHTML = `<span>${enemy.icon}</span><strong>${index + 1}. ${enemy.name}</strong><small>${enemy.lockCooldown ? "Mini Boss" : enemy.poison ? "Zehir" : enemy.block ? "Zırh" : "Normal"}</small>`;
+    const roleLabel = encounter.role === "miniBoss" ? "Mini Boss" : encounter.role === "elite" ? "Elit" : "Normal";
+    node.innerHTML = `<span>${enemy.icon}</span><strong>${index + 1}. ${encounter.label}</strong><small>${roleLabel} • ${enemy.name}</small>`;
     el.battlePath.appendChild(node);
   });
 }
@@ -404,6 +430,16 @@ function renderStats() {
   el.blockEstimate.textContent = block.toFixed(1);
   el.synergyCount.textContent = [...state.activeBonuses.values()].reduce((a, b) => a + b.length, 0);
   if (el.runDamage) el.runDamage.textContent = Math.ceil(state.runDamage);
+  const currentEncounter = getCurrentEncounter();
+  if (el.runStage) el.runStage.textContent = currentEncounter ? currentEncounter.label : "Run Tamamlandı";
+  if (el.nextRewardPreview) {
+    const preview = state.phase === "reward"
+      ? "3 ganimetten 1'ini seç"
+      : state.battleIndex >= TOTAL_BATTLES - 1
+        ? "Son savaş: mini boss"
+        : `Sıradaki ödül: +${currentEncounter?.rewardGold || 0} altın + eşya`;
+    el.nextRewardPreview.textContent = preview;
+  }
   el.battleNumber.textContent = Math.min(state.battleIndex + 1, TOTAL_BATTLES);
   el.battleTotal.textContent = TOTAL_BATTLES;
   el.gold.textContent = state.gold;
@@ -440,7 +476,9 @@ function startCombat() {
   state.combatItems = state.inventory.filter(Boolean).map(i => ({ ...i, timer: 0, used: false, lockedFor: 0 }));
   state.player.block = 0;
   state.player.poison = 0;
-  state.enemy.block = ENEMIES[state.battleIndex].block || 0;
+  const encounter = getCurrentEncounter();
+  const baseEnemy = getEnemyById(encounter.enemyId);
+  state.enemy.block = baseEnemy.block || 0;
   state.enemy.hp = state.enemy.maxHp;
   state.enemyTimer = 0;
   state.lockTimer = 0;
@@ -602,8 +640,19 @@ function renderCombatRuntime() {
 function winBattle() {
   state.phase = "reward";
   cancelAnimationFrame(animationFrame);
-  state.gold += 5 + state.battleIndex * 2;
-  addLog(`Zafer! Toplam ${Math.ceil(state.stats.damage)} hasar verdin.`);
+  const encounter = getCurrentEncounter();
+  const earnedGold = encounter.rewardGold || 5;
+  state.gold += earnedGold;
+  state.battleHistory.push({
+    battle: state.battleIndex + 1,
+    label: encounter.label,
+    enemy: state.enemy.name,
+    role: encounter.role,
+    damage: Math.ceil(state.stats.damage),
+    gold: earnedGold,
+    hpLeft: Math.ceil(state.player.hp)
+  });
+  addLog(`Zafer! ${encounter.label} temizlendi. +${earnedGold} altın, ${Math.ceil(state.stats.damage)} hasar.`);
   state.battleIndex++;
   if (state.battleIndex >= TOTAL_BATTLES) {
     showEnd(true);
@@ -621,9 +670,19 @@ function loseRun() {
   renderAll();
 }
 
+function getRewardChoices(count = 3) {
+  const ownedTypes = state.inventory.concat(state.reserve).filter(Boolean).map(instance => ITEMS[instance.itemId].type);
+  const weighted = REWARD_POOL.flatMap(itemId => {
+    const item = ITEMS[itemId];
+    const weight = ownedTypes.includes(item.type) ? 2 : 1;
+    return Array(weight).fill(itemId);
+  });
+  return [...new Set(shuffle(weighted))].slice(0, count);
+}
+
 function showRewards() {
   el.rewardChoices.innerHTML = "";
-  const choices = shuffle([...REWARD_POOL]).slice(0, 3);
+  const choices = getRewardChoices(3);
   for (const itemId of choices) {
     const item = ITEMS[itemId];
     const card = document.createElement("button");
@@ -642,15 +701,18 @@ function chooseReward(itemId) {
   state.player.hp = Math.min(state.player.maxHp, state.player.hp + 6);
   state.player.block = 0;
   prepareEnemy();
-  addLog(`${ITEMS[itemId].name} yedek eşyalara eklendi. Sonraki düşman: ${state.enemy.name}.`);
+  const nextEncounter = getCurrentEncounter();
+  addLog(`${ITEMS[itemId].name} yedek eşyalara eklendi. Sonraki durak: ${nextEncounter.label} — ${state.enemy.name}.`);
   renderAll();
 }
 
 function showEnd(won) {
   el.endTitle.textContent = won ? "Run Tamamlandı!" : "Game Over";
+  const cleared = state.battleHistory.length;
+  const last = state.battleHistory[state.battleHistory.length - 1];
   el.endSummary.textContent = won
-    ? `5 savaşı tamamladın. Toplam altın: ${state.gold}. Lanetli çanta bugün kazandı.`
-    : `${state.battleIndex + 1}. savaşta yenildin. Toplam altın: ${state.gold}.`;
+    ? `Aşama 2 tamamlandı: 5 savaşlık run bitti. Toplam altın: ${state.gold}. Toplam hasar: ${Math.ceil(state.runDamage)}. Son zafer: ${last?.label || "Mini boss"}.`
+    : `${state.battleIndex + 1}. savaşta yenildin. Temizlenen savaş: ${cleared}/5. Toplam altın: ${state.gold}.`;
   el.endModal.classList.remove("hidden");
 }
 
