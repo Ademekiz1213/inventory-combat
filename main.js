@@ -78,14 +78,17 @@ const ENEMIES = [
 ];
 
 const RUN_ENCOUNTERS = [
-  { enemyId: "goblin", role: "normal", label: "Mağara Girişi", rewardGold: 5 },
-  { enemyId: "rat", role: "normal", label: "Dar Tünel", rewardGold: 7 },
-  { enemyId: "beetle", role: "elite", label: "Zırhlı Geçit", rewardGold: 10 },
-  { enemyId: "spider", role: "normal", label: "Zehir Yuvası", rewardGold: 12 },
-  { enemyId: "bagBiter", role: "miniBoss", label: "Çanta Yiyen İn", rewardGold: 18 }
+  { type: "battle", enemyId: "goblin", role: "normal", label: "Mağara Girişi", rewardGold: 5 },
+  { type: "battle", enemyId: "rat", role: "normal", label: "Dar Tünel", rewardGold: 7 },
+  { type: "merchant", role: "merchant", label: "Tüccar Kampı", icon: "🛒" },
+  { type: "battle", enemyId: "beetle", role: "elite", label: "Zırhlı Geçit", rewardGold: 10 },
+  { type: "battle", enemyId: "spider", role: "normal", label: "Zehir Yuvası", rewardGold: 12 },
+  { type: "merchant", role: "merchant", label: "Gezgin Tüccar", icon: "🛒" },
+  { type: "battle", enemyId: "bagBiter", role: "miniBoss", label: "Çanta Yiyen İn", rewardGold: 18 }
 ];
 
 const REWARD_POOL = ["dagger", "axe", "armor", "speedRing", "bloodCrystal", "iceStone", "thorn", "bomb", "barrierStone", "fireStone", "shield"];
+const MERCHANT_POOL = ["axe", "armor", "speedRing", "bloodCrystal", "barrierStone", "bomb", "iceStone", "thorn"];
 
 let uid = 0;
 let animationFrame = null;
@@ -107,6 +110,7 @@ const state = {
   runDamage: 0,
   speed: 1,
   battleHistory: [],
+  merchantStock: [],
   activeBonuses: new Map()
 };
 
@@ -151,7 +155,10 @@ const el = {
   endTitle: document.getElementById("endTitle"),
   endSummary: document.getElementById("endSummary"),
   playerCard: document.getElementById("playerCard"),
-  enemyCard: document.getElementById("enemyCard")
+  enemyCard: document.getElementById("enemyCard"),
+  merchantModal: document.getElementById("merchantModal"),
+  merchantChoices: document.getElementById("merchantChoices"),
+  merchantContinue: document.getElementById("merchantContinueBtn")
 };
 
 function createInstance(itemId) {
@@ -170,6 +177,7 @@ function initGame() {
   state.runDamage = 0;
   state.speed = 1;
   state.battleHistory = [];
+  state.merchantStock = [];
   if (el.speedBtn) el.speedBtn.textContent = "1x Hız";
   state.inventory[0] = createInstance("sword");
   state.inventory[1] = createInstance("fireStone");
@@ -189,8 +197,30 @@ function getEnemyById(enemyId) {
   return ENEMIES.find(enemy => enemy.id === enemyId) || ENEMIES[0];
 }
 
+function isMerchantEncounter(encounter = getCurrentEncounter()) {
+  return encounter?.type === "merchant";
+}
+
+function getCompletedBattles() {
+  return state.battleHistory.length;
+}
+
+function getCurrentBattleNumber() {
+  const before = RUN_ENCOUNTERS.slice(0, state.battleIndex).filter(e => e.type === "battle").length;
+  return Math.min(TOTAL_BATTLES, before + (isMerchantEncounter() ? 0 : 1));
+}
+
 function prepareEnemy() {
   const encounter = getCurrentEncounter();
+  if (isMerchantEncounter(encounter)) {
+    state.enemy = {
+      id: "merchant", name: encounter.label, icon: encounter.icon || "🛒", hp: 1, maxHp: 1, block: 0,
+      attackDamage: 0, attackCooldown: 1, intent: "🛒 Alışveriş molası", encounterRole: "merchant", encounterLabel: encounter.label
+    };
+    state.enemyTimer = 0;
+    state.lockTimer = 0;
+    return;
+  }
   const base = getEnemyById(encounter.enemyId);
   state.enemy = { ...base, encounterRole: encounter.role, encounterLabel: encounter.label, maxHp: base.hp, timer: 0 };
   state.enemyTimer = 0;
@@ -377,6 +407,7 @@ function typeLabel(type) {
 }
 
 function enemySubtitle(enemy) {
+  if (enemy.encounterRole === "merchant") return "Tüccar • savaş yok";
   const role = enemy.encounterRole === "miniBoss" ? "Mini boss" : enemy.encounterRole === "elite" ? "Elit savaş" : "Normal savaş";
   if (enemy.lockCooldown) return `${role} • eşya kilitler`;
   if (enemy.poison) return `${role} • zehir tehdidi`;
@@ -389,15 +420,17 @@ function renderRoadmap() {
   if (!el.battlePath) return;
   el.battlePath.innerHTML = "";
   RUN_ENCOUNTERS.forEach((encounter, index) => {
-    const enemy = getEnemyById(encounter.enemyId);
+    const enemy = encounter.type === "merchant" ? { icon: encounter.icon || "🛒", name: "Tüccar" } : getEnemyById(encounter.enemyId);
     const node = document.createElement("div");
     node.className = "path-node";
     if (encounter.role === "elite") node.classList.add("elite");
     if (encounter.role === "miniBoss") node.classList.add("boss");
+    if (encounter.type === "merchant") node.classList.add("merchant");
     if (index < state.battleIndex) node.classList.add("done");
     if (index === state.battleIndex) node.classList.add("active");
-    const roleLabel = encounter.role === "miniBoss" ? "Mini Boss" : encounter.role === "elite" ? "Elit" : "Normal";
-    node.innerHTML = `<span>${enemy.icon}</span><strong>${index + 1}. ${encounter.label}</strong><small>${roleLabel} • ${enemy.name}</small>`;
+    const roleLabel = encounter.type === "merchant" ? "Tüccar" : encounter.role === "miniBoss" ? "Boss" : encounter.role === "elite" ? "Elit" : "Savaş";
+    node.title = `${encounter.label} • ${roleLabel}${encounter.type === "battle" ? ` • ${enemy.name}` : ""}`;
+    node.innerHTML = `<span>${enemy.icon}</span><small>${index + 1}</small>`;
     el.battlePath.appendChild(node);
   });
 }
@@ -433,18 +466,22 @@ function renderStats() {
   const currentEncounter = getCurrentEncounter();
   if (el.runStage) el.runStage.textContent = currentEncounter ? currentEncounter.label : "Run Tamamlandı";
   if (el.nextRewardPreview) {
-    const preview = state.phase === "reward"
-      ? "3 ganimetten 1'ini seç"
-      : state.battleIndex >= TOTAL_BATTLES - 1
-        ? "Son savaş: mini boss"
-        : `Sıradaki ödül: +${currentEncounter?.rewardGold || 0} altın + eşya`;
+    const preview = state.phase === "merchant"
+      ? "Tüccar: satın al veya geç"
+      : state.phase === "reward"
+        ? "3 ganimetten 1'ini seç"
+        : isMerchantEncounter(currentEncounter)
+          ? "Tüccar molası"
+          : state.battleIndex >= RUN_ENCOUNTERS.length - 1
+            ? "Son savaş: mini boss"
+            : `Ödül: +${currentEncounter?.rewardGold || 0} altın`;
     el.nextRewardPreview.textContent = preview;
   }
-  el.battleNumber.textContent = Math.min(state.battleIndex + 1, TOTAL_BATTLES);
+  el.battleNumber.textContent = getCurrentBattleNumber();
   el.battleTotal.textContent = TOTAL_BATTLES;
   el.gold.textContent = state.gold;
-  el.phaseBadge.textContent = state.phase === "combat" ? "Savaş" : state.phase === "reward" ? "Ödül" : "Hazırlık";
-  el.start.disabled = state.phase !== "prep";
+  el.phaseBadge.textContent = state.phase === "combat" ? "Savaş" : state.phase === "reward" ? "Ödül" : state.phase === "merchant" ? "Tüccar" : "Hazırlık";
+  el.start.disabled = state.phase !== "prep" || isMerchantEncounter();
 }
 
 function renderCombatants() {
@@ -461,7 +498,7 @@ function renderCombatants() {
   el.enemyHpBar.style.width = `${Math.max(0, e.hp / e.maxHp * 100)}%`;
   el.enemyBlock.textContent = Math.ceil(e.block);
   el.enemyIntent.textContent = e.intent;
-  el.battleTitle.textContent = state.phase === "combat" ? `${e.name} ile savaş` : `${e.name} için hazırlan`;
+  el.battleTitle.textContent = state.phase === "merchant" || e.encounterRole === "merchant" ? `${e.name} ziyareti` : state.phase === "combat" ? `${e.name} ile savaş` : `${e.name} için hazırlan`;
   if (el.enemyTimerFill) {
     const pct = Math.min(100, (state.enemyTimer / Math.max(0.1, e.attackCooldown)) * 100);
     el.enemyTimerFill.parentElement.style.background = `conic-gradient(var(--gold) ${pct}%, rgba(255,255,255,0.06) ${pct}%)`;
@@ -469,7 +506,7 @@ function renderCombatants() {
 }
 
 function startCombat() {
-  if (state.phase !== "prep") return;
+  if (state.phase !== "prep" || isMerchantEncounter()) return;
   calculateBonuses();
   state.phase = "combat";
   state.stats = { damage: 0, blocked: 0 };
@@ -654,7 +691,7 @@ function winBattle() {
   });
   addLog(`Zafer! ${encounter.label} temizlendi. +${earnedGold} altın, ${Math.ceil(state.stats.damage)} hasar.`);
   state.battleIndex++;
-  if (state.battleIndex >= TOTAL_BATTLES) {
+  if (getCompletedBattles() >= TOTAL_BATTLES) {
     showEnd(true);
   } else {
     showRewards();
@@ -667,6 +704,69 @@ function loseRun() {
   cancelAnimationFrame(animationFrame);
   addLog("Yenildin. Lanetli çanta sessizleşti.");
   showEnd(false);
+  renderAll();
+}
+
+function getMerchantStock(count = 3) {
+  return [...new Set(shuffle([...MERCHANT_POOL]))].slice(0, count).map((itemId, index) => ({
+    itemId,
+    price: ITEMS[itemId].rarity === "rare" ? 14 : index === 0 ? 7 : 10
+  }));
+}
+
+function showMerchantStop() {
+  state.phase = "merchant";
+  state.merchantStock = getMerchantStock(3);
+  renderMerchantChoices();
+  addLog(`${getCurrentEncounter().label}: Tüccar kampına ulaştın.`);
+  el.merchantModal.classList.remove("hidden");
+}
+
+function renderMerchantChoices() {
+  if (!el.merchantChoices) return;
+  el.merchantChoices.innerHTML = "";
+  const healCard = document.createElement("button");
+  healCard.className = "reward-card merchant-card";
+  healCard.innerHTML = `<span class="big-icon">❤️</span><p class="eyebrow">Hizmet • 6 altın</p><h3>Yara Sar</h3><p>12 can yeniler. Mevcut altın: ${state.gold}</p>`;
+  healCard.disabled = state.gold < 6 || state.player.hp >= state.player.maxHp;
+  healCard.addEventListener("click", () => buyMerchantHeal());
+  el.merchantChoices.appendChild(healCard);
+
+  for (const offer of state.merchantStock) {
+    const item = ITEMS[offer.itemId];
+    const card = document.createElement("button");
+    card.className = "reward-card merchant-card";
+    card.disabled = state.gold < offer.price;
+    card.innerHTML = `<span class="big-icon">${item.icon}</span><p class="eyebrow">${typeLabel(item.type)} • ${offer.price} altın</p><h3>${item.name}</h3><p>${item.description}</p>`;
+    card.addEventListener("click", () => buyMerchantItem(offer.itemId, offer.price));
+    el.merchantChoices.appendChild(card);
+  }
+}
+
+function buyMerchantItem(itemId, price) {
+  if (state.gold < price) return;
+  state.gold -= price;
+  state.reserve.push(createInstance(itemId));
+  addLog(`Tüccardan ${ITEMS[itemId].name} satın alındı. -${price} altın.`);
+  state.merchantStock = state.merchantStock.filter(offer => offer.itemId !== itemId);
+  renderMerchantChoices();
+  renderAll();
+}
+
+function buyMerchantHeal() {
+  if (state.gold < 6 || state.player.hp >= state.player.maxHp) return;
+  state.gold -= 6;
+  healPlayer(12, "Tüccar");
+  renderMerchantChoices();
+  renderAll();
+}
+
+function continueFromMerchant() {
+  el.merchantModal.classList.add("hidden");
+  state.battleIndex++;
+  state.phase = "prep";
+  prepareEnemy();
+  addLog(`Tüccar kampından ayrıldın. Sonraki durak: ${getCurrentEncounter().label}.`);
   renderAll();
 }
 
@@ -697,12 +797,17 @@ function showRewards() {
 function chooseReward(itemId) {
   state.reserve.push(createInstance(itemId));
   el.rewardModal.classList.add("hidden");
-  state.phase = "prep";
   state.player.hp = Math.min(state.player.maxHp, state.player.hp + 6);
   state.player.block = 0;
   prepareEnemy();
   const nextEncounter = getCurrentEncounter();
-  addLog(`${ITEMS[itemId].name} yedek eşyalara eklendi. Sonraki durak: ${nextEncounter.label} — ${state.enemy.name}.`);
+  if (isMerchantEncounter(nextEncounter)) {
+    addLog(`${ITEMS[itemId].name} yedek eşyalara eklendi. Sonraki durak: ${nextEncounter.label}.`);
+    showMerchantStop();
+  } else {
+    state.phase = "prep";
+    addLog(`${ITEMS[itemId].name} yedek eşyalara eklendi. Sonraki durak: ${nextEncounter.label} — ${state.enemy.name}.`);
+  }
   renderAll();
 }
 
@@ -771,11 +876,14 @@ if (el.speedBtn) {
 el.restart.addEventListener("click", () => {
   el.endModal.classList.add("hidden");
   el.rewardModal.classList.add("hidden");
+  if (el.merchantModal) el.merchantModal.classList.add("hidden");
   initGame();
 });
 el.endRestart.addEventListener("click", () => {
   el.endModal.classList.add("hidden");
+  if (el.merchantModal) el.merchantModal.classList.add("hidden");
   initGame();
 });
+if (el.merchantContinue) el.merchantContinue.addEventListener("click", continueFromMerchant);
 
 initGame();

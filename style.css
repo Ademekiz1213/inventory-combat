@@ -103,10 +103,10 @@ button { font: inherit; cursor: pointer; color: inherit; }
 
 .battle-track {
   border-radius: 14px;
-  padding: 8px;
+  padding: 7px;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(7, minmax(42px, 1fr));
+  gap: 7px;
 }
 .path-node {
   min-height: 54px;
@@ -119,6 +119,18 @@ button { font: inherit; cursor: pointer; color: inherit; }
 .path-node span { font-size: 1.7rem; filter: drop-shadow(0 4px 5px #000); }
 .path-node strong { color: var(--ink); display: block; font-size: .88rem; }
 .path-node small { color: var(--muted); }
+.battle-track.compact .path-node {
+  min-height: 38px;
+  grid-template-columns: 1fr;
+  gap: 2px;
+  padding: 5px;
+  text-align: center;
+}
+.battle-track.compact .path-node span { font-size: 1.35rem; }
+.battle-track.compact .path-node small { font-size: .62rem; color: var(--muted); }
+.path-node.merchant { border-color: rgba(242,184,75,.4); background: linear-gradient(180deg, rgba(79,51,22,.9), rgba(14,9,6,.94)); }
+.path-node.active.merchant { box-shadow: 0 0 24px rgba(242,184,75,.34), inset 0 0 18px rgba(242,184,75,.12); }
+.battle-track.compact .path-node strong { display: none; }
 .path-node.active { border-color: var(--gold); box-shadow: 0 0 22px rgba(242,184,75,.25), inset 0 0 18px rgba(242,184,75,.1); }
 .path-node.elite { border-color: rgba(154,117,255,.38); }
 .path-node.boss { border-color: rgba(214,75,63,.48); background: linear-gradient(180deg, rgba(68,24,20,.92), rgba(12,8,6,.94)); }
@@ -260,6 +272,10 @@ button { font: inherit; cursor: pointer; color: inherit; }
 .reward-card .big-icon { display: block; font-size: 2.8rem; margin-bottom: 8px; }
 .reward-card h3 { margin: 4px 0; font-family: Cinzel, serif; }
 .reward-card p { color: var(--muted); line-height: 1.4; }
+.reward-card:disabled { filter: grayscale(.8); opacity: .48; cursor: not-allowed; transform: none; }
+.merchant-choices { grid-template-columns: repeat(4, 1fr); }
+.merchant-card { min-height: 170px; }
+.merchant-continue { margin-top: 14px; width: 100%; }
 
 .floating-number { position: fixed; pointer-events: none; z-index: 40; font-weight: 1000; font-size: 1.35rem; animation: floatUp .85s ease forwards; text-shadow: 0 4px 0 #000, 0 0 10px rgba(0,0,0,.9); }
 .floating-number.damage { color: #ff6f61; } .floating-number.heal { color: #70ff96; } .floating-number.block { color: #64d8ff; }
@@ -281,7 +297,7 @@ button { font: inherit; cursor: pointer; color: inherit; }
   .game-screen { width: calc(100vw - 10px); }
   .game-top-hud { grid-template-columns: auto 1fr; }
   .hud-counters { grid-column: 1 / -1; justify-content: stretch; }
-  .battle-track { overflow-x: auto; grid-template-columns: repeat(5, 150px); }
+  .battle-track { overflow-x: auto; grid-template-columns: repeat(7, 58px); }
   .battle-title-strip { flex-direction: column; align-items: stretch; }
   .reserve-strip { grid-template-columns: 1fr; }
   .reward-choices { grid-template-columns: 1fr; }

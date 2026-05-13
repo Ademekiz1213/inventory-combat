@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=phase2-run-20260512" />
+  <link rel="stylesheet" href="style.css?v=merchant-minimal-20260512" />
 </head>
 <body>
   <div class="game-bg"></div>
@@ -30,7 +30,7 @@
       </div>
     </header>
 
-    <section class="battle-track" id="battlePath"></section>
+    <section class="battle-track compact" id="battlePath"></section>
 
     <section class="battlefield-frame">
       <div class="battle-title-strip">
@@ -123,6 +123,16 @@
     </div>
   </div>
 
+  <div id="merchantModal" class="modal hidden">
+    <div class="modal-card reward-modal-card game-window">
+      <span class="kicker">Tüccar</span>
+      <h2>Gezgin Tüccar</h2>
+      <p class="modal-copy">Altın harcayarak eşya satın alabilir veya can yenileyebilirsin. İstemiyorsan direkt devam et.</p>
+      <div id="merchantChoices" class="reward-choices merchant-choices"></div>
+      <button id="merchantContinueBtn" class="start-btn merchant-continue">DEVAM ET</button>
+    </div>
+  </div>
+
   <div id="endModal" class="modal hidden">
     <div class="modal-card game-window">
       <span class="kicker" id="endEyebrow">Run Bitti</span>
@@ -132,6 +142,6 @@
     </div>
   </div>
 
-  <script src="main.js?v=phase2-run-20260512"></script>
+  <script src="main.js?v=merchant-minimal-20260512"></script>
 </body>
 </html>

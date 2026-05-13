@@ -24,6 +24,8 @@ Son sürüm web sitesi hissinden çıkarılıp tam ekran bir **fantasy game HUD*
 Bu sürüm 2. aşama hedefini oyuna ekler:
 
 - 5 savaşlık net rota: normal savaşlar, elit savaş ve mini boss.
+- Minimal durak şeridi: uzun metin yerine ikon + sıra numarası.
+- Tüccar durakları: altınla eşya satın alma veya can yenileme.
 - Her zaferden sonra altın kazanımı.
 - Savaş sonrası 3 ganimet kartından 1 eşya seçimi.
 - Seçilen eşyanın yedek alana gelmesi ve sonraki savaş öncesi yeniden yerleştirilebilmesi.
