@@ -27,7 +27,8 @@ const ITEMS = {
       "physical",
       "fast"
     ],
-    "description": "Her 1 saniyede 2 hasar verir. Hızlı tetiklenir."
+    "description": "Her 1 saniyede 2 hasar verir ve her vuruşta 1 zehir biriktirir.",
+    "poison": 1
   },
   "spear": {
     "id": "spear",
@@ -40,7 +41,8 @@ const ITEMS = {
     "tags": [
       "physical"
     ],
-    "description": "Her 2.4 saniyede 6 hasar verir. Dengeli menzilli saldırı."
+    "description": "Her 2.4 saniyede 6 hasar verir. Hasarın %35’i bloktan sızar.",
+    "pierce": 0.35
   },
   "club": {
     "id": "club",
@@ -54,7 +56,9 @@ const ITEMS = {
       "physical",
       "heavy"
     ],
-    "description": "Her 2.8 saniyede 7 hasar verir. Yavaş ama güvenilir."
+    "description": "Her 2.8 saniyede 7 hasar verir ve düşmanı 4 sn boyunca %8 kırılgan yapar.",
+    "enemyVulnerable": 0.08,
+    "vulnerableDuration": 4
   },
   "sling": {
     "id": "sling",
@@ -81,7 +85,8 @@ const ITEMS = {
     "tags": [
       "physical"
     ],
-    "description": "Her 2.2 saniyede 5 hasar verir. Komşuluk bonuslarından iyi faydalanır."
+    "description": "Her 2.2 saniyede 5 hasar verir; her atıştan sonra 2 blok kazanırsın.",
+    "selfBlock": 2
   },
   "shield": {
     "id": "shield",
@@ -91,7 +96,8 @@ const ITEMS = {
     "icon": "🛡️",
     "cooldown": 3,
     "block": 5,
-    "description": "Her 3 saniyede 5 blok verir."
+    "description": "Her 3 saniyede 5 blok verir ve 1 zehir temizler.",
+    "cleansePoison": 1
   },
   "buckler": {
     "id": "buckler",
@@ -130,7 +136,8 @@ const ITEMS = {
     "rarity": "common",
     "icon": "🥋",
     "startBlock": 10,
-    "description": "Savaş başında 10 blok verir."
+    "description": "Savaş başında 10 blok ve +8 maksimum can verir.",
+    "maxHpBonus": 8
   },
   "travelCloak": {
     "id": "travelCloak",
@@ -139,7 +146,8 @@ const ITEMS = {
     "rarity": "common",
     "icon": "🧥",
     "startBlock": 6,
-    "description": "Savaş başında 6 blok verir. Hafif ama ucuz koruma."
+    "description": "Savaş başında 6 blok verir. Savaş boyunca saniyede 0.35 can yeniler.",
+    "regen": 0.35
   },
   "luckyCharm": {
     "id": "luckyCharm",
@@ -178,7 +186,8 @@ const ITEMS = {
     "icon": "💚",
     "heal": 10,
     "hpThreshold": 16,
-    "description": "Can 16'nın altına düşünce bir kez 10 can iyileştirir."
+    "description": "Can 16'nın altına düşünce 10 can iyileştirir ve tüm zehri temizler.",
+    "cleansePoison": 99
   },
   "whetstone": {
     "id": "whetstone",
@@ -214,7 +223,9 @@ const ITEMS = {
       "physical",
       "heavy"
     ],
-    "description": "Yavaş ama güçlüdür. Her 3.5 saniyede 11 hasar verir."
+    "description": "Her 3.5 saniyede 11 hasar verir. Düşman %35 can altındaysa %80 daha sert vurur.",
+    "executeThreshold": 0.35,
+    "executeMultiplier": 1.8
   },
   "mace": {
     "id": "mace",
@@ -228,7 +239,8 @@ const ITEMS = {
       "physical",
       "heavy"
     ],
-    "description": "Her 3 saniyede 9 hasar verir. Bloklu düşmanlara karşı istikrarlı baskı kurar."
+    "description": "Her 3 saniyede 9 hasar verir ve düşmanın 5 blokunu kırar.",
+    "armorBreak": 5
   },
   "rapier": {
     "id": "rapier",
@@ -242,7 +254,8 @@ const ITEMS = {
       "physical",
       "fast"
     ],
-    "description": "Her 1.4 saniyede 4 hasar verir. Hız odaklı buildlere uygundur."
+    "description": "Her 1.4 saniyede 4 hasar verir. Her vuruştan sonra bu savaşta +0.45 hasar kazanır.",
+    "rampDamage": 0.45
   },
   "crossbow": {
     "id": "crossbow",
@@ -268,7 +281,9 @@ const ITEMS = {
     "tags": [
       "fire"
     ],
-    "description": "Her 2.5 saniyede 8 hasar verir. Ateş buildleri için iyi merkezdir."
+    "description": "Her 2.5 saniyede 8 hasar verir ve düşmanı 3 sn %12 kırılgan yapar.",
+    "enemyVulnerable": 0.12,
+    "vulnerableDuration": 3
   },
   "towerShield": {
     "id": "towerShield",
@@ -278,7 +293,8 @@ const ITEMS = {
     "icon": "🏰",
     "cooldown": 5,
     "block": 12,
-    "description": "Her 5 saniyede 12 blok verir. Büyük ama yavaş savunma sağlar."
+    "description": "Her 5 saniyede 12 blok verir ve güvenli duruşla ekstra 3 blok sağlar.",
+    "selfBlock": 3
   },
   "wardTotem": {
     "id": "wardTotem",
@@ -326,7 +342,8 @@ const ITEMS = {
     "icon": "🍷",
     "heal": 16,
     "hpThreshold": 20,
-    "description": "Can 20'nin altına düşünce bir kez 16 can iyileştirir."
+    "description": "Can 20'nin altına düşünce 16 can iyileştirir ve 2 zehir temizler.",
+    "cleansePoison": 2
   },
   "smokeVial": {
     "id": "smokeVial",
@@ -336,7 +353,8 @@ const ITEMS = {
     "icon": "🌫️",
     "heal": 14,
     "hpThreshold": 14,
-    "description": "Can 14'ün altına düşünce bir kez 14 can iyileştirir."
+    "description": "Can 14'ün altına düşünce 14 can iyileştirir ve düşman saldırı zamanını 1.5 sn geri iter.",
+    "startSlow": 1.5
   },
   "fireStone": {
     "id": "fireStone",
@@ -384,7 +402,8 @@ const ITEMS = {
     "rarity": "uncommon",
     "icon": "🔪",
     "startDamage": 12,
-    "description": "Savaş başında bir kez 12 hasar verir. Kısa savaşları hızlandırır."
+    "description": "Savaş başında 12 hasar verir ve düşmana kanama uygular.",
+    "bleed": 2
   },
   "twinBlades": {
     "id": "twinBlades",
@@ -398,7 +417,8 @@ const ITEMS = {
       "physical",
       "fast"
     ],
-    "description": "Her 1.5 saniyede 6 hasar verir. Bonuslarla çok iyi ölçeklenir."
+    "description": "Her 1.5 saniyede 6 hasar verir. %35 ihtimalle ikinci kez vurur.",
+    "doubleHitChance": 0.35
   },
   "frostStaff": {
     "id": "frostStaff",
@@ -411,7 +431,8 @@ const ITEMS = {
     "tags": [
       "ice"
     ],
-    "description": "Her 2.6 saniyede 10 hasar verir. Yavaşlatma taşlarıyla güvenli oynar."
+    "description": "Her 2.6 saniyede 10 hasar verir ve düşman saldırısını 0.6 sn geciktirir.",
+    "startSlow": 0.6
   },
   "warhammer": {
     "id": "warhammer",
@@ -425,7 +446,9 @@ const ITEMS = {
       "physical",
       "heavy"
     ],
-    "description": "Her 4 saniyede 16 hasar verir. Büyük tek vuruş odaklıdır."
+    "description": "Her 4 saniyede 16 hasar verir. Bloktan %50 sızar ve 8 blok kırar.",
+    "pierce": 0.5,
+    "armorBreak": 8
   },
   "barrierStone": {
     "id": "barrierStone",
@@ -444,7 +467,8 @@ const ITEMS = {
     "rarity": "rare",
     "icon": "🦇",
     "startBlock": 8,
-    "description": "Savaş başında 8 blok verir. Can çalma buildlerine güvenli başlangıç sağlar."
+    "description": "Savaş başında 8 blok verir. Savaş boyunca yavaş can yeniler.",
+    "regen": 0.25
   },
   "elixir": {
     "id": "elixir",
@@ -454,7 +478,8 @@ const ITEMS = {
     "icon": "⚗️",
     "heal": 22,
     "hpThreshold": 15,
-    "description": "Can 15'in altına düşünce bir kez 22 can iyileştirir."
+    "description": "Can 15'in altına düşünce 22 can iyileştirir ve kısa süreli güçlü yenilenme sağlar.",
+    "regen": 1.2
   },
   "speedRing": {
     "id": "speedRing",
@@ -493,7 +518,8 @@ const ITEMS = {
       "damage": 2,
       "label": "+2 hasar"
     },
-    "description": "Yanındaki silahlara +2 hasar ve daha net tempo verir."
+    "description": "Yanındaki silahlara +2 hasar verir; odaklı vuruşlar kırılganlıkla iyi ölçeklenir.",
+    "enemyVulnerable": 0.05
   },
   "holyWater": {
     "id": "holyWater",
@@ -502,7 +528,9 @@ const ITEMS = {
     "rarity": "rare",
     "icon": "💧",
     "startDamage": 20,
-    "description": "Savaş başında bir kez 20 hasar verir. Mini boss öncesi güçlüdür."
+    "description": "Savaş başında 20 hasar verir ve düşmanı 5 sn %15 kırılgan yapar.",
+    "enemyVulnerable": 0.15,
+    "vulnerableDuration": 5
   },
   "phoenixFeather": {
     "id": "phoenixFeather",
@@ -511,7 +539,9 @@ const ITEMS = {
     "rarity": "epic",
     "icon": "🪶",
     "startBlock": 16,
-    "description": "Savaş başında 16 blok verir. Riskli buildlere ikinci nefes sağlar."
+    "description": "Savaş başında 16 blok, +12 maksimum can ve yavaş yenilenme verir.",
+    "maxHpBonus": 12,
+    "regen": 0.45
   },
   "amplifier": {
     "id": "amplifier",
@@ -546,7 +576,8 @@ const ITEMS = {
     "rarity": "epic",
     "icon": "☄️",
     "startDamage": 25,
-    "description": "Savaş başında bir kez 25 hasar verir. Burst buildlerinin çekirdeğidir."
+    "description": "Savaş başında 25 hasar verir ve düşmanın 12 blokunu parçalar.",
+    "armorBreak": 12
   },
   "poisonBomb": {
     "id": "poisonBomb",
@@ -555,7 +586,8 @@ const ITEMS = {
     "rarity": "epic",
     "icon": "☠️",
     "startDamage": 18,
-    "description": "Savaş başında bir kez 18 hasar verir. Uzun savaşa girmeden tempo kazandırır."
+    "description": "Savaş başında 18 hasar verir ve düşmana 6 zehir uygular.",
+    "poison": 6
   },
   "blackMirror": {
     "id": "blackMirror",
@@ -569,16 +601,17 @@ const ITEMS = {
       "cooldownMultiplier": 1.2,
       "label": "+2 hasar, %20 daha yavaş"
     },
-    "description": "Yanındaki silaha +2 hasar verir ama ritmini %20 yavaşlatır. Güçlü tek silah buildleri için riskli ödül."
+    "description": "Yanındaki silaha +2 hasar verir ama ritmini %20 yavaşlatır. Ayrıca özel mekaniklerle riskli ölçeklenir.",
+    "copyAdjacent": true
   }
 };
 
 const ENEMIES = [
-  { id: "goblin", name: "Goblin Baskıncı", icon: "👺", hp: 52, block: 0, attackDamage: 7, attackCooldown: 2.6, intent: "🗡️ 2.6 sn sonra 7 hasar" },
-  { id: "rat", name: "Kuduz Mağara Sıçanı", icon: "🐀", hp: 66, block: 0, attackDamage: 5, attackCooldown: 1.4, intent: "🗡️ 1.4 sn sonra 5 hasar" },
-  { id: "beetle", name: "Taş Zırhlı Böcek", icon: "🪲", hp: 92, block: 22, attackDamage: 9, attackCooldown: 2.7, intent: "🛡️ Zırhlı, 2.7 sn sonra 9 hasar" },
-  { id: "spider", name: "Zehirli Alfa Örümcek", icon: "🕷️", hp: 125, block: 10, attackDamage: 7, attackCooldown: 2.2, poison: 2, intent: "☠️ 2.2 sn sonra 7 hasar + 2 zehir" },
-  { id: "bagBiter", name: "Çanta Yiyen Dev", icon: "🐗", hp: 170, block: 35, attackDamage: 14, attackCooldown: 2.5, lockCooldown: 4.5, lockDuration: 3, intent: "🔒 Sık sık eşya kilitler, 2.5 sn sonra 14 hasar" }
+  { id: "goblin", name: "Goblin Kaptan", icon: "👺", hp: 95, block: 0, attackDamage: 11, attackCooldown: 2.4, enrageAt: 0.45, enrageDamage: 5, intent: "🗡️ 2.4 sn sonra 11 hasar • düşük canda öfkelenir" },
+  { id: "rat", name: "Kanlı Mağara Sürüsü", icon: "🐀", hp: 125, block: 0, attackDamage: 7, attackCooldown: 1.3, bleed: 1.2, intent: "🩸 1.3 sn sonra 7 hasar + kanama" },
+  { id: "beetle", name: "Taş Zırhlı Böcek", icon: "🪲", hp: 170, block: 45, attackDamage: 13, attackCooldown: 2.5, blockGainCooldown: 4, blockGain: 14, armorBreak: 4, intent: "🛡️ Blok yeniler, 2.5 sn sonra 13 hasar + zırh kırma" },
+  { id: "spider", name: "Zehirli Alfa Örümcek", icon: "🕷️", hp: 250, block: 25, attackDamage: 10, attackCooldown: 1.9, poison: 3, enrageAt: 0.35, enrageDamage: 4, intent: "☠️ 1.9 sn sonra 10 hasar + 3 zehir" },
+  { id: "bagBiter", name: "Çanta Yiyen Dev", icon: "🐗", hp: 300, block: 80, attackDamage: 18, attackCooldown: 2.1, lockCooldown: 3.2, lockDuration: 4, blockGainCooldown: 5, blockGain: 18, armorBreak: 8, bleed: 2, enrageAt: 0.4, enrageDamage: 8, intent: "🔒 Eşya kilitler, blok yeniler, düşük canda ölümcül olur" }
 ];
 
 const RUN_ENCOUNTERS = [
@@ -606,7 +639,7 @@ const state = {
   gold: 0,
   inventory: Array(GRID_SIZE * GRID_SIZE).fill(null),
   reserve: [],
-  player: { maxHp: 50, hp: 50, block: 0, poison: 0 },
+  player: { maxHp: 50, hp: 50, block: 0, poison: 0, bleed: 0 },
   enemy: null,
   combatItems: [],
   enemyTimer: 0,
@@ -677,7 +710,7 @@ function initGame() {
   state.gold = 0;
   state.inventory = Array(GRID_SIZE * GRID_SIZE).fill(null);
   state.reserve = [];
-  state.player = { maxHp: 50, hp: 50, block: 0, poison: 0 };
+  state.player = { maxHp: 50, hp: 50, block: 0, poison: 0, bleed: 0 };
   state.stats = { damage: 0, blocked: 0 };
   state.runDamage = 0;
   state.speed = 1;
@@ -1016,11 +1049,17 @@ function startCombat() {
   state.phase = "combat";
   state.stats = { damage: 0, blocked: 0 };
   state.combatItems = state.inventory.filter(Boolean).map(i => ({ ...i, timer: 0, used: false, lockedFor: 0 }));
+  const maxHpBonus = state.combatItems.reduce((sum, instance) => sum + (ITEMS[instance.itemId].maxHpBonus || 0), 0);
+  const previousMaxHp = state.player.maxHp;
+  state.player.maxHp = 50 + maxHpBonus;
+  if (state.player.maxHp > previousMaxHp) state.player.hp += state.player.maxHp - previousMaxHp;
+  state.player.hp = Math.min(state.player.hp, state.player.maxHp);
   state.player.block = 0;
   state.player.poison = 0;
+  state.player.bleed = 0;
   const encounter = getCurrentEncounter();
   const baseEnemy = getEnemyById(encounter.enemyId);
-  state.enemy.block = baseEnemy.block || 0;
+  state.enemy = { ...baseEnemy, maxHp: baseEnemy.hp, block: baseEnemy.block || 0, poisoned: 0, bleed: 0, vulnerableFor: 0, vulnerability: 0, enraged: false, blockTimer: 0 };
   state.enemy.hp = state.enemy.maxHp;
   state.enemyTimer = 0;
   state.lockTimer = 0;
@@ -1035,6 +1074,7 @@ function startCombat() {
     }
     if (item.startDamage) {
       damageEnemy(item.startDamage, item.name);
+      applyItemSpecialEffects(instance, item.startDamage);
       instance.used = true;
     }
   }
@@ -1069,13 +1109,36 @@ function updateCombat(dt) {
     } else if (item.type === "consumable" && !instance.used && state.player.hp <= item.hpThreshold) {
       instance.used = true;
       healPlayer(item.heal, item.name);
+      applyItemSpecialEffects(instance, item.heal);
       triggerVisual(instance.instanceId);
+    }
+    if (item.regen && state.player.hp < state.player.maxHp) {
+      state.player.hp = Math.min(state.player.maxHp, state.player.hp + item.regen * dt);
     }
   }
 
   if (state.player.poison > 0) {
     state.player.hp -= state.player.poison * dt;
   }
+  if (state.player.bleed > 0) {
+    state.player.hp -= state.player.bleed * dt;
+    state.player.bleed = Math.max(0, state.player.bleed - dt * 0.25);
+  }
+  if (state.enemy.poisoned > 0) {
+    state.enemy.hp -= state.enemy.poisoned * dt;
+    state.runDamage += state.enemy.poisoned * dt;
+  }
+  if (state.enemy.bleed > 0) {
+    state.enemy.hp -= state.enemy.bleed * dt;
+    state.runDamage += state.enemy.bleed * dt;
+    state.enemy.bleed = Math.max(0, state.enemy.bleed - dt * 0.2);
+  }
+  if (state.enemy.vulnerableFor > 0) {
+    state.enemy.vulnerableFor = Math.max(0, state.enemy.vulnerableFor - dt);
+    if (state.enemy.vulnerableFor === 0) state.enemy.vulnerability = 0;
+  }
+
+  applyEnemySpecials(dt);
 
   state.enemyTimer += dt;
   if (state.enemyTimer >= state.enemy.attackCooldown) {
@@ -1099,8 +1162,9 @@ function triggerItem(instance) {
   const item = ITEMS[instance.itemId];
   triggerVisual(instance.instanceId);
   if (item.type === "weapon") {
-    const damage = getEffectiveDamage(instance);
-    damageEnemy(damage, item.name);
+    const damage = getSpecialDamage(instance);
+    damageEnemy(damage, item.name, { pierce: item.pierce || 0 });
+    applyItemSpecialEffects(instance, damage);
     for (const bonus of getBonuses(instance)) {
       if (bonus.lifesteal) healPlayer(Math.ceil(damage * bonus.lifesteal), "Can çalma");
       if (bonus.slow) {
@@ -1111,6 +1175,8 @@ function triggerItem(instance) {
   }
   if (item.type === "defense") {
     state.player.block += item.block;
+    if (item.selfBlock) state.player.block += item.selfBlock;
+    if (item.cleansePoison) state.player.poison = Math.max(0, state.player.poison - item.cleansePoison);
     addLog(`${item.name} ${item.block} blok verdi.`);
     flash(el.playerCard, "blocked");
     for (const bonus of getBonuses(instance)) {
@@ -1119,21 +1185,95 @@ function triggerItem(instance) {
   }
 }
 
-function damageEnemy(amount, source) {
+function getSpecialDamage(instance) {
+  const item = ITEMS[instance.itemId];
+  let damage = getEffectiveDamage(instance) + (instance.rampStacks || 0) * (item.rampDamage || 0);
+  if (item.executeThreshold && state.enemy.hp / state.enemy.maxHp <= item.executeThreshold) {
+    damage *= item.executeMultiplier || 1.5;
+  }
+  return damage;
+}
+
+function applyItemSpecialEffects(instance, damage = 0) {
+  const item = ITEMS[instance.itemId];
+  if (item.poison) {
+    state.enemy.poisoned = (state.enemy.poisoned || 0) + item.poison;
+    addLog(`${item.name} ${item.poison} zehir biriktirdi.`);
+  }
+  if (item.bleed) {
+    state.enemy.bleed = (state.enemy.bleed || 0) + item.bleed;
+    addLog(`${item.name} kanama uyguladı.`);
+  }
+  if (item.armorBreak) {
+    const broken = Math.min(state.enemy.block, item.armorBreak);
+    state.enemy.block -= broken;
+    if (broken > 0) addLog(`${item.name} ${broken} blok kırdı.`);
+  }
+  if (item.selfBlock && item.type !== "defense") {
+    state.player.block += item.selfBlock;
+    addLog(`${item.name} ${item.selfBlock} blok kazandırdı.`);
+  }
+  if (item.cleansePoison) {
+    const before = state.player.poison;
+    state.player.poison = Math.max(0, state.player.poison - item.cleansePoison);
+    if (before !== state.player.poison) addLog(`${item.name} zehri temizledi.`);
+  }
+  if (item.enemyVulnerable) {
+    state.enemy.vulnerability = Math.max(state.enemy.vulnerability || 0, item.enemyVulnerable);
+    state.enemy.vulnerableFor = Math.max(state.enemy.vulnerableFor || 0, item.vulnerableDuration || 3);
+    addLog(`${item.name} düşmanı kırılgan yaptı.`);
+  }
+  if (item.startSlow) {
+    state.enemyTimer = Math.max(0, state.enemyTimer - item.startSlow);
+    addLog(`${item.name} düşmanın saldırısını geciktirdi.`);
+  }
+  if (item.rampDamage) instance.rampStacks = (instance.rampStacks || 0) + 1;
+  if (item.doubleHitChance && Math.random() < item.doubleHitChance) {
+    damageEnemy(Math.max(1, damage * 0.65), `${item.name} ikinci vuruş`, { pierce: item.pierce || 0 });
+  }
+}
+
+function applyEnemySpecials(dt) {
+  if (state.enemy.enrageAt && !state.enemy.enraged && state.enemy.hp / state.enemy.maxHp <= state.enemy.enrageAt) {
+    state.enemy.enraged = true;
+    state.enemy.attackDamage += state.enemy.enrageDamage || 0;
+    addLog(`${state.enemy.name} öfkelendi!`);
+  }
+  if (state.enemy.blockGainCooldown) {
+    state.enemy.blockTimer = (state.enemy.blockTimer || 0) + dt;
+    if (state.enemy.blockTimer >= state.enemy.blockGainCooldown) {
+      state.enemy.blockTimer = 0;
+      state.enemy.block += state.enemy.blockGain || 0;
+      addLog(`${state.enemy.name} ${state.enemy.blockGain} blok yeniledi.`);
+    }
+  }
+}
+
+function damageEnemy(amount, source, options = {}) {
   let damage = amount;
+  if (state.enemy.vulnerability) damage *= 1 + state.enemy.vulnerability;
+  const pierceDamage = Math.min(state.enemy.block, damage * (options.pierce || 0));
+  state.enemy.block -= pierceDamage;
+  damage -= pierceDamage;
   const blocked = Math.min(state.enemy.block, damage);
   state.enemy.block -= blocked;
   damage -= blocked;
-  state.enemy.hp -= damage;
-  state.stats.damage += damage;
-  state.runDamage += Math.max(0, damage);
-  addLog(`${source} ${amount} hasar verdi${blocked ? ` (${blocked} bloklandı)` : ""}.`);
-  floatNumber(el.enemyCard, `-${Math.ceil(damage)}`, "damage");
+  const totalDamage = damage + pierceDamage;
+  state.enemy.hp -= totalDamage;
+  state.stats.damage += totalDamage;
+  state.runDamage += Math.max(0, totalDamage);
+  addLog(`${source} ${Math.ceil(totalDamage)} hasar verdi${blocked ? ` (${Math.ceil(blocked)} bloklandı)` : ""}.`);
+  floatNumber(el.enemyCard, `-${Math.ceil(totalDamage)}`, "damage");
   flash(el.enemyCard, "hit");
 }
 
 function enemyAttack() {
   let damage = state.enemy.attackDamage;
+  if (state.enemy.armorBreak && state.player.block > 0) {
+    const broken = Math.min(state.player.block, state.enemy.armorBreak);
+    state.player.block -= broken;
+    addLog(`${state.enemy.name} ${broken} blok kırdı.`);
+  }
   const blocked = Math.min(state.player.block, damage);
   state.player.block -= blocked;
   damage -= blocked;
@@ -1145,6 +1285,10 @@ function enemyAttack() {
   if (state.enemy.poison) {
     state.player.poison += state.enemy.poison;
     addLog(`${state.enemy.name} ${state.enemy.poison} zehir uyguladı.`);
+  }
+  if (state.enemy.bleed) {
+    state.player.bleed += state.enemy.bleed;
+    addLog(`${state.enemy.name} kanama uyguladı.`);
   }
   flash(el.playerCard, damage > 0 ? "hit" : "blocked");
 }

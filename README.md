@@ -28,6 +28,8 @@ Bu sürüm 2. aşama hedefini oyuna ekler:
 - Tüccar durakları: altınla eşya satın alma veya can yenileme.
 - 50 kartlık dengeli eşya havuzu: silah, savunma, pasif, tek kullanımlık, güçlendirici ve savaş başı kartları.
 - Zorluk dengesi güncellendi: düşman HP/hasar eğrisi artık basit başlangıç kılıcıyla tüm run'ı geçirmeyi cezalandırır.
+- Kartlar artık sadece hasar/saniye varyantı değil: zehir, kanama, blok delme, infaz, kırılganlık, zırh kırma, ramp-up hasar, yenilenme ve maksimum can gibi özel mekanikler var.
+- Düşmanlar da özel mekanik kazandı: öfkelenme, zırh kırma, blok yenileme, kanama, zehir ve sık eşya kilitleme.
 - Her zaferden sonra altın kazanımı.
 - Savaş sonrası 3 ganimet kartından 1 eşya seçimi.
 - Seçilen eşyanın yedek alana gelmesi ve sonraki savaş öncesi yeniden yerleştirilebilmesi.
