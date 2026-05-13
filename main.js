@@ -574,11 +574,11 @@ const ITEMS = {
 };
 
 const ENEMIES = [
-  { id: "goblin", name: "Goblin", icon: "👺", hp: 35, block: 0, attackDamage: 6, attackCooldown: 3, intent: "🗡️ 3 sn sonra 6 hasar" },
-  { id: "rat", name: "Mağara Sıçanı", icon: "🐀", hp: 28, block: 0, attackDamage: 3, attackCooldown: 1.5, intent: "🗡️ 1.5 sn sonra 3 hasar" },
-  { id: "beetle", name: "Taş Böceği", icon: "🪲", hp: 48, block: 12, attackDamage: 5, attackCooldown: 3.5, intent: "🛡️ Zırhlı, 3.5 sn sonra 5 hasar" },
-  { id: "spider", name: "Zehirli Örümcek", icon: "🕷️", hp: 42, block: 0, attackDamage: 4, attackCooldown: 2.7, poison: 1, intent: "☠️ 2.7 sn sonra 4 hasar + zehir" },
-  { id: "bagBiter", name: "Çanta Kemiren", icon: "🐗", hp: 78, block: 8, attackDamage: 8, attackCooldown: 3.2, lockCooldown: 6, lockDuration: 2.2, intent: "🔒 Ara sıra eşya kilitler" }
+  { id: "goblin", name: "Goblin Baskıncı", icon: "👺", hp: 52, block: 0, attackDamage: 7, attackCooldown: 2.6, intent: "🗡️ 2.6 sn sonra 7 hasar" },
+  { id: "rat", name: "Kuduz Mağara Sıçanı", icon: "🐀", hp: 66, block: 0, attackDamage: 5, attackCooldown: 1.4, intent: "🗡️ 1.4 sn sonra 5 hasar" },
+  { id: "beetle", name: "Taş Zırhlı Böcek", icon: "🪲", hp: 92, block: 22, attackDamage: 9, attackCooldown: 2.7, intent: "🛡️ Zırhlı, 2.7 sn sonra 9 hasar" },
+  { id: "spider", name: "Zehirli Alfa Örümcek", icon: "🕷️", hp: 125, block: 10, attackDamage: 7, attackCooldown: 2.2, poison: 2, intent: "☠️ 2.2 sn sonra 7 hasar + 2 zehir" },
+  { id: "bagBiter", name: "Çanta Yiyen Dev", icon: "🐗", hp: 170, block: 35, attackDamage: 14, attackCooldown: 2.5, lockCooldown: 4.5, lockDuration: 3, intent: "🔒 Sık sık eşya kilitler, 2.5 sn sonra 14 hasar" }
 ];
 
 const RUN_ENCOUNTERS = [
